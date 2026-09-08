@@ -14,16 +14,205 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      payouts: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          saldo: number
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          nome?: string
+          saldo?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          saldo?: number
+        }
+        Relationships: []
+      }
+      submissions: {
+        Row: {
+          comentario: string
+          created_at: string
+          experiencia: string
+          foto_url: string | null
+          id: string
+          reviewed_at: string | null
+          status: string
+          task_id: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          comentario?: string
+          created_at?: string
+          experiencia: string
+          foto_url?: string | null
+          id?: string
+          reviewed_at?: string | null
+          status?: string
+          task_id: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          comentario?: string
+          created_at?: string
+          experiencia?: string
+          foto_url?: string | null
+          id?: string
+          reviewed_at?: string | null
+          status?: string
+          task_id?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          ativa: boolean
+          created_at: string
+          descricao: string
+          empresa: string
+          id: string
+          local: string
+          prazo: string
+          tempo_estimado: string
+          titulo: string
+          valor: number
+        }
+        Insert: {
+          ativa?: boolean
+          created_at?: string
+          descricao?: string
+          empresa: string
+          id?: string
+          local?: string
+          prazo?: string
+          tempo_estimado?: string
+          titulo: string
+          valor: number
+        }
+        Update: {
+          ativa?: boolean
+          created_at?: string
+          descricao?: string
+          empresa?: string
+          id?: string
+          local?: string
+          prazo?: string
+          tempo_estimado?: string
+          titulo?: string
+          valor?: number
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          created_at: string
+          descricao: string
+          id: string
+          tipo: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          descricao: string
+          id?: string
+          tipo?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          descricao?: string
+          id?: string
+          tipo?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      revisar_envio: {
+        Args: { _aprovar: boolean; _submission_id: string }
+        Returns: undefined
+      }
+      solicitar_resgate: { Args: { _valor: number }; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +339,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
