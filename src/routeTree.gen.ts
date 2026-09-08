@@ -10,33 +10,119 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedCarteiraRouteImport } from './routes/_authenticated/carteira'
+import { Route as AuthenticatedOfertasRouteImport } from './routes/_authenticated/ofertas'
+import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
+import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCarteiraRoute = AuthenticatedCarteiraRouteImport.update({
+  id: '/carteira',
+  path: '/carteira',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOfertasRoute = AuthenticatedOfertasRouteImport.update({
+  id: '/ofertas',
+  path: '/ofertas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTarefasIndexRoute =
+  AuthenticatedTarefasIndexRouteImport.update({
+    id: '/tarefas/',
+    path: '/tarefas/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedTarefasIdRoute = AuthenticatedTarefasIdRouteImport.update({
+  id: '/tarefas/$id',
+  path: '/tarefas/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/carteira': typeof AuthenticatedCarteiraRoute
+  '/ofertas': typeof AuthenticatedOfertasRoute
+  '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/carteira': typeof AuthenticatedCarteiraRoute
+  '/ofertas': typeof AuthenticatedOfertasRoute
+  '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/tarefas': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/carteira': typeof AuthenticatedCarteiraRoute
+  '/_authenticated/ofertas': typeof AuthenticatedOfertasRoute
+  '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/carteira'
+    | '/ofertas'
+    | '/tarefas/$id'
+    | '/tarefas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/carteira'
+    | '/ofertas'
+    | '/tarefas/$id'
+    | '/tarefas'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/admin'
+    | '/_authenticated/carteira'
+    | '/_authenticated/ofertas'
+    | '/_authenticated/tarefas/$id'
+    | '/_authenticated/tarefas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +134,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/carteira': {
+      id: '/_authenticated/carteira'
+      path: '/carteira'
+      fullPath: '/carteira'
+      preLoaderRoute: typeof AuthenticatedCarteiraRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ofertas': {
+      id: '/_authenticated/ofertas'
+      path: '/ofertas'
+      fullPath: '/ofertas'
+      preLoaderRoute: typeof AuthenticatedOfertasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tarefas/': {
+      id: '/_authenticated/tarefas/'
+      path: '/tarefas'
+      fullPath: '/tarefas/'
+      preLoaderRoute: typeof AuthenticatedTarefasIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tarefas/$id': {
+      id: '/_authenticated/tarefas/$id'
+      path: '/tarefas/$id'
+      fullPath: '/tarefas/$id'
+      preLoaderRoute: typeof AuthenticatedTarefasIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedCarteiraRoute: typeof AuthenticatedCarteiraRoute
+  AuthenticatedOfertasRoute: typeof AuthenticatedOfertasRoute
+  AuthenticatedTarefasIdRoute: typeof AuthenticatedTarefasIdRoute
+  AuthenticatedTarefasIndexRoute: typeof AuthenticatedTarefasIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedCarteiraRoute: AuthenticatedCarteiraRoute,
+  AuthenticatedOfertasRoute: AuthenticatedOfertasRoute,
+  AuthenticatedTarefasIdRoute: AuthenticatedTarefasIdRoute,
+  AuthenticatedTarefasIndexRoute: AuthenticatedTarefasIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
