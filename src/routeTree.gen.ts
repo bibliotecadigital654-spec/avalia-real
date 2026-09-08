@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCarteiraRouteImport } from './routes/_authenticated/carteira'
 import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
 import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
 
@@ -29,6 +30,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCarteiraRoute = AuthenticatedCarteiraRouteImport.update({
+  id: '/carteira',
+  path: '/carteira',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTarefasIndexRoute =
   AuthenticatedTarefasIndexRouteImport.update({
     id: '/tarefas/',
@@ -44,12 +50,14 @@ const AuthenticatedTarefasIdRoute = AuthenticatedTarefasIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/carteira': typeof AuthenticatedCarteiraRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/carteira': typeof AuthenticatedCarteiraRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/tarefas': typeof AuthenticatedTarefasIndexRoute
 }
@@ -58,19 +66,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/carteira': typeof AuthenticatedCarteiraRoute
   '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/tarefas/$id' | '/tarefas/'
+  fullPaths: '/' | '/auth' | '/carteira' | '/tarefas/$id' | '/tarefas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/tarefas/$id' | '/tarefas'
+  to: '/' | '/auth' | '/carteira' | '/tarefas/$id' | '/tarefas'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/carteira'
     | '/_authenticated/tarefas/$id'
     | '/_authenticated/tarefas/'
   fileRoutesById: FileRoutesById
@@ -104,6 +114,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/carteira': {
+      id: '/_authenticated/carteira'
+      path: '/carteira'
+      fullPath: '/carteira'
+      preLoaderRoute: typeof AuthenticatedCarteiraRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/tarefas/': {
       id: '/_authenticated/tarefas/'
       path: '/tarefas'
@@ -122,11 +139,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCarteiraRoute: typeof AuthenticatedCarteiraRoute
   AuthenticatedTarefasIdRoute: typeof AuthenticatedTarefasIdRoute
   AuthenticatedTarefasIndexRoute: typeof AuthenticatedTarefasIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCarteiraRoute: AuthenticatedCarteiraRoute,
   AuthenticatedTarefasIdRoute: AuthenticatedTarefasIdRoute,
   AuthenticatedTarefasIndexRoute: AuthenticatedTarefasIndexRoute,
 }
