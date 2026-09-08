@@ -17,8 +17,8 @@ export function AppShell({
   isAdmin,
 }: {
   children: ReactNode;
-  nome?: string;
-  isAdmin?: boolean;
+  nome?: string | undefined;
+  isAdmin?: boolean | undefined;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
