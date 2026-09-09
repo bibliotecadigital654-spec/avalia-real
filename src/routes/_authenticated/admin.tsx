@@ -41,11 +41,21 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("submissions")
         .select(
-          "id, experiencia, comentario, foto_url, valor, status, created_at, tasks(titulo, empresa), profiles(nome)",
+          "id, user_id, experiencia, comentario, foto_url, valor, status, created_at, tasks(titulo, empresa)",
         )
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as unknown as Envio[];
+
+      const lista = (data ?? []) as unknown as Envio[];
+      const ids = [...new Set(lista.map((e) => e.user_id))];
+      if (ids.length === 0) return lista;
+
+      const { data: perfis } = await supabase
+        .from("profiles")
+        .select("id, nome")
+        .in("id", ids);
+      const mapa = new Map((perfis ?? []).map((p) => [p.id, p.nome] as const));
+      return lista.map((e) => ({ ...e, profiles: { nome: mapa.get(e.user_id) ?? null } }));
     },
   });
 
