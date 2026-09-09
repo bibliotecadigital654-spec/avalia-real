@@ -1,5 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { z } from "zod";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { brl } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,13 +20,138 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Microtarefas pagas de avaliação de empresas, com saldo e resgate em reais.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
 });
 
+const cadastroSchema = z.object({
+  nome_completo: z.string().trim().min(3, { message: "Informe seu nome completo" }).max(120),
+  email: z.string().trim().email({ message: "E-mail inválido" }).max(255),
+  senha: z.string().min(6, { message: "A senha precisa de ao menos 6 caracteres" }).max(72),
+  pix_key: z.string().trim().max(140).optional(),
+});
+
+const loginSchema = z.object({
+  email: z.string().trim().email({ message: "E-mail inválido" }).max(255),
+  senha: z.string().min(6, { message: "A senha precisa de ao menos 6 caracteres" }).max(72),
+});
+
+function useSaldoTempoReal(userId: string | null) {
+  const [saldo, setSaldo] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!userId) {
+      setSaldo(null);
+      return;
+    }
+    let ativo = true;
+
+    const carregar = async () => {
+      const { data } = await supabase
+        .from("wallets")
+        .select("saldo_atual")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (ativo) setSaldo(Number(data?.saldo_atual ?? 0));
+    };
+    void carregar();
+
+    const canal = supabase
+      .channel(`carteira-${userId}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "wallets", filter: `user_id=eq.${userId}` },
+        (payload) => {
+          const novo = (payload.new as { saldo_atual?: number } | null)?.saldo_atual;
+          if (novo !== undefined && ativo) setSaldo(Number(novo));
+        },
+      )
+      .subscribe();
+
+    return () => {
+      ativo = false;
+      void supabase.removeChannel(canal);
+    };
+  }, [userId]);
+
+  return saldo;
+}
+
 function Index() {
-  const { session, carregando } = useAuth();
+  const { session, user, carregando } = useAuth();
+  const navigate = useNavigate();
+  const saldo = useSaldoTempoReal(user?.id ?? null);
+
+  const [modo, setModo] = useState<"criar" | "entrar" | null>(null);
+  const [nomeCompleto, setNomeCompleto] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [pix, setPix] = useState("");
+  const [enviando, setEnviando] = useState(false);
+
+  const campo =
+    "mt-1.5 w-full rounded-[12px] bg-background px-3 py-2.5 text-sm ring-1 ring-border outline-none focus:ring-2 focus:ring-ring";
+
+  async function enviar(e: React.FormEvent) {
+    e.preventDefault();
+    setEnviando(true);
+    try {
+      if (modo === "criar") {
+        const parsed = cadastroSchema.safeParse({
+          nome_completo: nomeCompleto,
+          email,
+          senha,
+          pix_key: pix,
+        });
+        if (!parsed.success) {
+          toast.error(parsed.error.issues[0]?.message ?? "Confira os dados");
+          return;
+        }
+        const { data, error } = await supabase.auth.signUp({
+          email: parsed.data.email,
+          password: parsed.data.senha,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: {
+              nome_completo: parsed.data.nome_completo,
+              nome: parsed.data.nome_completo,
+              pix_key: parsed.data.pix_key ?? "",
+            },
+          },
+        });
+        if (error) throw error;
+        if (!data.session) {
+          toast.success("Conta criada! Confirme seu e-mail para entrar.");
+          setModo("entrar");
+          return;
+        }
+        toast.success("Conta criada!");
+        setModo(null);
+      } else {
+        const parsed = loginSchema.safeParse({ email, senha });
+        if (!parsed.success) {
+          toast.error(parsed.error.issues[0]?.message ?? "Confira os dados");
+          return;
+        }
+        const { error } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.senha,
+        });
+        if (error) throw error;
+        toast.success("Bem-vindo de volta!");
+        setModo(null);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível continuar");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  const logado = !carregando && !!session;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
@@ -38,12 +168,12 @@ function Index() {
           <p className="font-display text-base font-semibold tracking-tight">AvaliaReal</p>
         </div>
 
-        <h1 className="mt-8 font-display text-4xl font-semibold leading-tight tracking-tight text-pretty">
+        <h1 className="mt-8 font-display text-4xl leading-tight font-semibold tracking-tight text-pretty">
           Avalie empresas. Receba em reais.
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          Escolha uma microtarefa perto de você, responda algumas perguntas, anexe uma foto e veja o
-          valor cair no seu cofre.
+          Escolha uma pesquisa ou oferta disponível, responda às perguntas das marcas parceiras e
+          veja o saldo acumular direto na sua carteira virtual.
         </p>
 
         <div className="mt-7 rounded-[22px] bg-gradient-safe p-5 text-primary-foreground shadow-safe">
@@ -51,15 +181,17 @@ function Index() {
             Saldo acumulado
           </p>
           <p className="balance-pop mt-2 font-display text-5xl leading-none font-semibold tracking-tight">
-            R$ 1.248,00
+            {logado ? brl(saldo ?? 0) : "R$ 1.248,00"}
           </p>
           <p className="mt-1 text-xs text-primary-foreground/60">
-            Exemplo do que dá para juntar avaliando no dia a dia
+            {logado
+              ? "Seu saldo atualiza sozinho a cada recompensa confirmada"
+              : "Exemplo do que dá para juntar avaliando no dia a dia"}
           </p>
         </div>
 
         <div className="mt-7 space-y-3">
-          {!carregando && session ? (
+          {logado ? (
             <Link
               to="/tarefas"
               className="block rounded-full bg-gradient-brand py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98]"
@@ -68,22 +200,124 @@ function Index() {
             </Link>
           ) : (
             <>
-              <Link
-                to="/auth"
-                className="block rounded-full bg-gradient-brand py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98]"
+              <button
+                onClick={() => {
+                  setModo("criar");
+                  setSenha("");
+                }}
+                className="block w-full rounded-full bg-gradient-brand py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98]"
               >
                 Criar conta grátis
-              </Link>
-              <Link
-                to="/auth"
-                className="block rounded-full bg-card py-3 text-center text-sm font-semibold text-foreground ring-1 ring-border transition-transform active:scale-[.98]"
+              </button>
+              <button
+                onClick={() => {
+                  setModo("entrar");
+                  setSenha("");
+                }}
+                className="block w-full rounded-full bg-card py-3 text-center text-sm font-semibold text-foreground ring-1 ring-border transition-transform active:scale-[.98]"
               >
                 Já tenho conta
-              </Link>
+              </button>
             </>
           )}
         </div>
       </main>
+
+      {modo ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-4 backdrop-blur-sm sm:items-center">
+          <div className="w-full max-w-md rounded-[24px] bg-card p-5 ring-1 ring-border">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="font-display text-xl font-semibold tracking-tight">
+                  {modo === "criar" ? "Criar conta grátis" : "Entrar na sua conta"}
+                </h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {modo === "criar"
+                    ? "Leva menos de um minuto."
+                    : "Use o e-mail e a senha do seu cadastro."}
+                </p>
+              </div>
+              <button
+                onClick={() => setModo(null)}
+                aria-label="Fechar"
+                className="rounded-full px-2 py-1 text-sm text-muted-foreground"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={enviar} className="mt-4 space-y-3.5">
+              {modo === "criar" ? (
+                <div>
+                  <label className="text-xs font-semibold text-foreground/70">Nome Completo</label>
+                  <input
+                    value={nomeCompleto}
+                    onChange={(e) => setNomeCompleto(e.target.value)}
+                    maxLength={120}
+                    placeholder="Marina Souza"
+                    className={campo}
+                  />
+                </div>
+              ) : null}
+
+              <div>
+                <label className="text-xs font-semibold text-foreground/70">E-mail</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  maxLength={255}
+                  placeholder="voce@email.com"
+                  className={campo}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-foreground/70">Senha</label>
+                <input
+                  type="password"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  maxLength={72}
+                  placeholder="mínimo de 6 caracteres"
+                  className={campo}
+                />
+              </div>
+
+              {modo === "criar" ? (
+                <div>
+                  <label className="text-xs font-semibold text-foreground/70">
+                    Chave Pix (opcional)
+                  </label>
+                  <input
+                    value={pix}
+                    onChange={(e) => setPix(e.target.value)}
+                    maxLength={140}
+                    placeholder="e-mail, CPF ou telefone"
+                    className={campo}
+                  />
+                </div>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={enviando}
+                className="w-full rounded-full bg-gradient-brand py-3.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98] disabled:opacity-60"
+              >
+                {enviando ? "Aguarde…" : modo === "criar" ? "Criar conta" : "Entrar"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/auth" })}
+                className="w-full text-center text-xs font-semibold text-brand"
+              >
+                Prefiro entrar com o Google
+              </button>
+            </form>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

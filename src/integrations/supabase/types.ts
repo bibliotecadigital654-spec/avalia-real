@@ -43,18 +43,24 @@ export type Database = {
           created_at: string
           id: string
           nome: string
+          nome_completo: string
+          pix_key: string | null
           saldo: number
         }
         Insert: {
           created_at?: string
           id: string
           nome?: string
+          nome_completo?: string
+          pix_key?: string | null
           saldo?: number
         }
         Update: {
           created_at?: string
           id?: string
           nome?: string
+          nome_completo?: string
+          pix_key?: string | null
           saldo?: number
         }
         Relationships: []
@@ -150,6 +156,7 @@ export type Database = {
           created_at: string
           descricao: string
           id: string
+          tarefa_id: string | null
           tipo: string
           user_id: string
           valor: number
@@ -158,6 +165,7 @@ export type Database = {
           created_at?: string
           descricao: string
           id?: string
+          tarefa_id?: string | null
           tipo?: string
           user_id: string
           valor: number
@@ -166,6 +174,7 @@ export type Database = {
           created_at?: string
           descricao?: string
           id?: string
+          tarefa_id?: string | null
           tipo?: string
           user_id?: string
           valor?: number
@@ -193,11 +202,47 @@ export type Database = {
         }
         Relationships: []
       }
+      wallets: {
+        Row: {
+          created_at: string
+          id: string
+          saldo_atual: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          saldo_atual?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          saldo_atual?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      creditar_recompensa: {
+        Args: { _tarefa_id: string; _user_id: string; _valor: number }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
