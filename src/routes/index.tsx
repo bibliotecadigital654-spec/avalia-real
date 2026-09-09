@@ -218,6 +218,8 @@ function Index() {
                 onClick={() => {
                   setModo("criar");
                   setSenha("");
+                  setErro(null);
+                  setSucesso(null);
                 }}
                 className="block w-full rounded-full bg-gradient-brand py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98]"
               >
