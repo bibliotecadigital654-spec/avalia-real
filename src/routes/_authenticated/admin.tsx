@@ -19,8 +19,9 @@ type Envio = {
   valor: number;
   status: string;
   created_at: string;
+  user_id: string;
   tasks: { titulo: string; empresa: string } | null;
-  profiles: { nome: string | null } | null;
+  profiles?: { nome: string | null } | null;
 };
 
 function AdminPage() {
@@ -40,11 +41,21 @@ function AdminPage() {
       const { data, error } = await supabase
         .from("submissions")
         .select(
-          "id, experiencia, comentario, foto_url, valor, status, created_at, tasks(titulo, empresa), profiles(nome)",
+          "id, user_id, experiencia, comentario, foto_url, valor, status, created_at, tasks(titulo, empresa)",
         )
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as unknown as Envio[];
+
+      const lista = (data ?? []) as unknown as Envio[];
+      const ids = [...new Set(lista.map((e) => e.user_id))];
+      if (ids.length === 0) return lista;
+
+      const { data: perfis } = await supabase
+        .from("profiles")
+        .select("id, nome")
+        .in("id", ids);
+      const mapa = new Map((perfis ?? []).map((p) => [p.id, p.nome] as const));
+      return lista.map((e) => ({ ...e, profiles: { nome: mapa.get(e.user_id) ?? null } }));
     },
   });
 
@@ -133,9 +144,9 @@ function AdminPage() {
                 </div>
                 <span
                   className={
-                    e.status === "aprovado"
+                    e.status === "aprovada"
                       ? "shrink-0 rounded-full bg-safe/15 px-2.5 py-1 text-[11px] font-semibold text-safe"
-                      : e.status === "rejeitado"
+                      : e.status === "rejeitada"
                         ? "shrink-0 rounded-full bg-destructive/10 px-2.5 py-1 text-[11px] font-semibold text-destructive"
                         : "shrink-0 rounded-full bg-brand/10 px-2.5 py-1 text-[11px] font-semibold text-brand"
                   }
