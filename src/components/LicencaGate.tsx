@@ -1,20 +1,24 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLicenca } from "@/hooks/useLicenca";
 import { useAuth } from "@/hooks/useAuth";
 import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
+import { criarCobrancaLicenca } from "@/lib/licenca.functions";
 
-const PIX_FICTICIO =
-  "00020126580014BR.GOV.BCB.PIX0136avaliareal-licenca-anual-simulada5204000053039865802BR5910AVALIAREAL6009SAO PAULO62070503***6304AB12";
 
 export function LicencaGate({ userId, children }: { userId?: string | undefined; children: ReactNode }) {
   const { licenca, carregando } = useLicenca(userId ?? null);
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [mostrarPix, setMostrarPix] = useState(false);
-  const [ativando, setAtivando] = useState(false);
+  const criarCobranca = useServerFn(criarCobrancaLicenca);
+  const [abrirForm, setAbrirForm] = useState(false);
+  const [nome, setNome] = useState("");
+  const [documento, setDocumento] = useState("");
+  const [gerando, setGerando] = useState(false);
+  const [cobranca, setCobranca] = useState<{ paymentId: string; url: string | null } | null>(null);
   const vitalicia = temLicencaVitalicia(user?.email);
   const sincronizado = useRef(false);
 
@@ -28,17 +32,18 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   if (!userId || carregando || !licenca) return <>{children}</>;
   if (licenca.ativa) return <>{children}</>;
 
-  async function confirmar() {
-    setAtivando(true);
+  async function gerarCobranca() {
+    setGerando(true);
     try {
-      const { error } = await supabase.rpc("ativar_licenca");
-      if (error) throw error;
+      const res = await criarCobranca({ data: { nome, cpfCnpj: documento } });
+      setCobranca({ paymentId: res.paymentId, url: res.url });
       await queryClient.invalidateQueries();
-      toast.success("Licença ativada por 1 ano!");
+      if (res.url) window.open(res.url, "_blank", "noopener,noreferrer");
+      toast.success("Cobrança gerada! Conclua o pagamento na página do Asaas.");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível ativar");
+      toast.error(err instanceof Error ? err.message : "Não foi possível gerar a cobrança");
     } finally {
-      setAtivando(false);
+      setGerando(false);
     }
   }
 
@@ -65,28 +70,65 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
             </p>
           ) : null}
 
-          {mostrarPix ? (
+          {cobranca ? (
             <div className="mt-5 rounded-[16px] bg-background p-4 ring-1 ring-border">
-              <p className="text-xs font-semibold text-foreground/70">Pix copia e cola (simulado)</p>
-              <p className="mt-2 break-all rounded-[12px] bg-card p-3 font-mono text-[11px] text-muted-foreground ring-1 ring-border">
-                {PIX_FICTICIO}
+              <p className="text-xs font-semibold text-foreground/70">Cobrança gerada</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Pague por Pix, boleto ou cartão na página segura do Asaas. A liberação é automática
+                assim que o pagamento é confirmado.
               </p>
+              {cobranca.url ? (
+                <a
+                  href={cobranca.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 block w-full rounded-full bg-gradient-safe py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-safe"
+                >
+                  Abrir página de pagamento
+                </a>
+              ) : null}
+              <p className="mt-3 font-mono text-[11px] break-all text-muted-foreground">
+                Código da cobrança: {cobranca.paymentId}
+              </p>
+            </div>
+          ) : abrirForm ? (
+            <div className="mt-5 space-y-3 rounded-[16px] bg-background p-4 ring-1 ring-border">
+              <div>
+                <label className="text-xs font-semibold text-foreground/70">Nome completo</label>
+                <input
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  className="mt-1 w-full rounded-[12px] bg-card px-3 py-2.5 text-sm ring-1 ring-border outline-none"
+                  placeholder="Seu nome"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-foreground/70">CPF ou CNPJ</label>
+                <input
+                  value={documento}
+                  onChange={(e) => setDocumento(e.target.value)}
+                  inputMode="numeric"
+                  className="mt-1 w-full rounded-[12px] bg-card px-3 py-2.5 text-sm ring-1 ring-border outline-none"
+                  placeholder="000.000.000-00"
+                />
+              </div>
               <button
-                onClick={confirmar}
-                disabled={ativando}
-                className="mt-3 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
+                onClick={gerarCobranca}
+                disabled={gerando || nome.trim().length < 2 || documento.replace(/\D/g, "").length < 11}
+                className="w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
               >
-                {ativando ? "Confirmando…" : "Já paguei — confirmar ativação"}
+                {gerando ? "Gerando cobrança…" : "Gerar cobrança de R$ 49,90"}
               </button>
             </div>
           ) : (
             <button
-              onClick={() => setMostrarPix(true)}
+              onClick={() => setAbrirForm(true)}
               className="mt-6 w-full rounded-full bg-gradient-brand py-3.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98]"
             >
               Ativar Licença por 1 Ano
             </button>
           )}
+
 
           <button
             onClick={async () => {
