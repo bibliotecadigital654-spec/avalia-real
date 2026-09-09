@@ -48,21 +48,30 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          pix_chave: string
+          pix_tipo: string
           status: string
+          updated_at: string
           user_id: string
           valor: number
         }
         Insert: {
           created_at?: string
           id?: string
+          pix_chave?: string
+          pix_tipo?: string
           status?: string
+          updated_at?: string
           user_id: string
           valor: number
         }
         Update: {
           created_at?: string
           id?: string
+          pix_chave?: string
+          pix_tipo?: string
           status?: string
+          updated_at?: string
           user_id?: string
           valor?: number
         }
@@ -278,6 +287,42 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_resgates: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          pix_chave: string
+          pix_tipo: string
+          status: string
+          user_id: string
+          valor: number
+        }[]
+      }
+      admin_usuarios: {
+        Args: never
+        Returns: {
+          criado_em: string
+          email: string
+          nome: string
+          saldo: number
+          status_licenca: string
+          user_id: string
+          validade_licenca: string
+        }[]
+      }
+      admin_visao_geral: {
+        Args: never
+        Returns: {
+          licencas_ativas: number
+          lucro_estimado: number
+          saldo_total: number
+          saques_pendentes: number
+          total_usuarios: number
+        }[]
+      }
       aplicar_licenca_vitalicia: {
         Args: never
         Returns: {
@@ -338,7 +383,14 @@ export type Database = {
         Args: { _aprovar: boolean; _submission_id: string }
         Returns: undefined
       }
-      solicitar_resgate: { Args: { _valor: number }; Returns: undefined }
+      revisar_resgate: {
+        Args: { _aprovar: boolean; _payout_id: string }
+        Returns: undefined
+      }
+      solicitar_resgate: {
+        Args: { _pix_chave: string; _pix_tipo: string; _valor: number }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "user"
