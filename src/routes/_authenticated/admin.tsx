@@ -19,8 +19,9 @@ type Envio = {
   valor: number;
   status: string;
   created_at: string;
+  user_id: string;
   tasks: { titulo: string; empresa: string } | null;
-  profiles: { nome: string | null } | null;
+  profiles?: { nome: string | null } | null;
 };
 
 function AdminPage() {
