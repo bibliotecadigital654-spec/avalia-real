@@ -229,6 +229,8 @@ function Index() {
                 onClick={() => {
                   setModo("entrar");
                   setSenha("");
+                  setErro(null);
+                  setSucesso(null);
                 }}
                 className="block w-full rounded-full bg-card py-3 text-center text-sm font-semibold text-foreground ring-1 ring-border transition-transform active:scale-[.98]"
               >
