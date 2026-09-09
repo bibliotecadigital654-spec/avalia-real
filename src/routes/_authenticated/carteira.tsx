@@ -11,10 +11,22 @@ export const Route = createFileRoute("/_authenticated/carteira")({
   component: CarteiraPage,
 });
 
+const TIPOS_PIX = [
+  { valor: "cpf", label: "CPF" },
+  { valor: "cnpj", label: "CNPJ" },
+  { valor: "email", label: "E-mail" },
+  { valor: "celular", label: "Celular" },
+  { valor: "chave_aleatoria", label: "Chave aleatória" },
+] as const;
+
+const SAQUE_MINIMO = 20;
+
 function CarteiraPage() {
   const { data: conta } = useConta();
   const queryClient = useQueryClient();
   const [valor, setValor] = useState("");
+  const [pixTipo, setPixTipo] = useState<string>("cpf");
+  const [pixChave, setPixChave] = useState("");
   const [enviando, setEnviando] = useState(false);
 
   const { data: extrato } = useQuery({
