@@ -17,6 +17,7 @@ import { Route as AuthenticatedCarteiraRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedOfertasRouteImport } from './routes/_authenticated/ofertas'
 import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
 import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
+import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
 import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +60,11 @@ const AuthenticatedTarefasIdRoute = AuthenticatedTarefasIdRouteImport.update({
   path: '/tarefas/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicAsaasWebhookRoute = ApiPublicAsaasWebhookRouteImport.update({
+  id: '/api/public/asaas-webhook',
+  path: '/api/public/asaas-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
   id: '/api/public/postback',
   path: '/api/public/postback',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/tarefas': typeof AuthenticatedTarefasIndexRoute
 }
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated/carteira': typeof AuthenticatedCarteiraRoute
   '/_authenticated/ofertas': typeof AuthenticatedOfertasRoute
   '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/carteira'
     | '/ofertas'
     | '/tarefas/$id'
+    | '/api/public/asaas-webhook'
     | '/api/public/postback'
     | '/tarefas/'
   fileRoutesByTo: FileRoutesByTo
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/carteira'
     | '/ofertas'
     | '/tarefas/$id'
+    | '/api/public/asaas-webhook'
     | '/api/public/postback'
     | '/tarefas'
   id:
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/_authenticated/carteira'
     | '/_authenticated/ofertas'
     | '/_authenticated/tarefas/$id'
+    | '/api/public/asaas-webhook'
     | '/api/public/postback'
     | '/_authenticated/tarefas/'
   fileRoutesById: FileRoutesById
@@ -135,6 +147,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicAsaasWebhookRoute: typeof ApiPublicAsaasWebhookRoute
   ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
 }
 
@@ -196,6 +209,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTarefasIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/asaas-webhook': {
+      id: '/api/public/asaas-webhook'
+      path: '/api/public/asaas-webhook'
+      fullPath: '/api/public/asaas-webhook'
+      preLoaderRoute: typeof ApiPublicAsaasWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/postback': {
       id: '/api/public/postback'
       path: '/api/public/postback'
@@ -229,6 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicAsaasWebhookRoute: ApiPublicAsaasWebhookRoute,
   ApiPublicPostbackRoute: ApiPublicPostbackRoute,
 }
 export const routeTree = rootRouteImport

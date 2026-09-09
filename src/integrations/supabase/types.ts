@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      licenca_pedidos: {
+        Row: {
+          created_at: string
+          id: string
+          payment_id: string
+          status: string
+          updated_at: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payment_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          valor?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payment_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
       payouts: {
         Row: {
           created_at: string
@@ -287,6 +317,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      confirmar_pagamento_licenca: {
+        Args: { _payment_id: string }
+        Returns: string
       }
       creditar_recompensa: {
         Args: { _tarefa_id: string; _user_id: string; _valor: number }
