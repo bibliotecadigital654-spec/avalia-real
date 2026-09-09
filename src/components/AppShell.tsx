@@ -2,6 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { LicencaGate } from "@/components/LicencaGate";
+import { useConta } from "@/hooks/useConta";
 
 type NavItem = { to: string; label: string; glyph: string };
 
@@ -22,6 +24,7 @@ export function AppShell({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { data: conta } = useConta();
 
   async function sair() {
     await queryClient.cancelQueries();
@@ -68,7 +71,7 @@ export function AppShell({
           </div>
         </div>
 
-        {children}
+        <LicencaGate userId={conta?.userId}>{children}</LicencaGate>
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md px-5 pb-5">

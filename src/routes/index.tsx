@@ -13,7 +13,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Faça microtarefas de avaliação em lojas, apps e restaurantes, envie sua foto e receba em reais na carteira.",
+          "Responda pesquisas e ofertas online das marcas parceiras e receba em reais direto na sua carteira.",
       },
       { property: "og:title", content: "AvaliaReal — ganhe avaliando empresas" },
       {

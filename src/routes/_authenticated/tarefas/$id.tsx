@@ -31,8 +31,6 @@ function TarefaDetalhe() {
 
   const [experiencia, setExperiencia] = useState<(typeof OPCOES)[number]>("Ótimo");
   const [comentario, setComentario] = useState("");
-  const [foto, setFoto] = useState<File | null>(null);
-  const [previa, setPrevia] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
   const { data: tarefa, isLoading } = useQuery({
@@ -44,12 +42,6 @@ function TarefaDetalhe() {
     },
   });
 
-  function escolherFoto(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null;
-    setFoto(file);
-    setPrevia(file ? URL.createObjectURL(file) : null);
-  }
-
   async function enviar() {
     if (!tarefa || !conta) return;
     const parsed = schema.safeParse({ experiencia, comentario });
@@ -57,26 +49,15 @@ function TarefaDetalhe() {
       toast.error(parsed.error.issues[0]?.message ?? "Confira as respostas");
       return;
     }
-    if (!foto) {
-      toast.error("Anexe uma foto para enviar a tarefa");
-      return;
-    }
 
     setEnviando(true);
     try {
-      const ext = foto.name.split(".").pop()?.toLowerCase() || "jpg";
-      const caminho = `${conta.userId}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("envios").upload(caminho, foto, {
-        contentType: foto.type || "image/jpeg",
-      });
-      if (upErr) throw upErr;
-
       const { error } = await supabase.from("submissions").insert({
         task_id: tarefa.id,
         user_id: conta.userId,
         experiencia: parsed.data.experiencia,
         comentario: parsed.data.comentario,
-        foto_url: caminho,
+        
         valor: tarefa.valor,
       });
       if (error) throw error;
@@ -152,31 +133,6 @@ function TarefaDetalhe() {
                     maxLength={1000}
                     placeholder="Conte em poucas palavras…"
                     className="mt-1.5 h-24 w-full resize-none rounded-[12px] bg-background p-3 text-sm ring-1 ring-border outline-none focus:ring-2 focus:ring-ring"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-semibold text-foreground/70">
-                    Anexe uma foto do local
-                  </label>
-                  {previa ? (
-                    <img
-                      src={previa}
-                      alt="Prévia da foto anexada"
-                      className="mt-1.5 aspect-[16/10] w-full rounded-[12px] object-cover ring-1 ring-border"
-                    />
-                  ) : (
-                    <div className="mt-1.5 grid aspect-[16/10] w-full place-items-center rounded-[12px] bg-background ring-1 ring-border">
-                      <span className="text-[11px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
-                        sem foto
-                      </span>
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={escolherFoto}
-                    className="mt-2 w-full text-xs text-muted-foreground file:mr-3 file:rounded-full file:border-0 file:bg-brand/10 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-brand"
                   />
                 </div>
 
