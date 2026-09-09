@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { brl } from "@/lib/format";
+import { mensagemAuth } from "@/lib/erros-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
