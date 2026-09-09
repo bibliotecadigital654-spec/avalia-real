@@ -256,13 +256,46 @@ function Index() {
                 </p>
               </div>
               <button
-                onClick={() => setModo(null)}
+                onClick={() => {
+                  setModo(null);
+                  setErro(null);
+                  setSucesso(null);
+                }}
                 aria-label="Fechar"
                 className="rounded-full px-2 py-1 text-sm text-muted-foreground"
               >
                 ✕
               </button>
             </div>
+
+            {sucesso ? (
+              <div
+                role="status"
+                className="mt-4 rounded-[16px] bg-gradient-safe p-4 text-primary-foreground shadow-safe"
+              >
+                <p className="text-sm font-semibold">✓ Tudo certo!</p>
+                <p className="mt-1 text-xs text-primary-foreground/80">{sucesso}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSucesso(null);
+                    setModo(session ? null : "entrar");
+                  }}
+                  className="mt-3 w-full rounded-full bg-background/90 py-2.5 text-xs font-semibold text-foreground"
+                >
+                  {session ? "Continuar" : "Ir para o login"}
+                </button>
+              </div>
+            ) : null}
+
+            {erro ? (
+              <div
+                role="alert"
+                className="mt-4 rounded-[16px] bg-destructive/10 p-3 text-xs font-medium text-destructive ring-1 ring-destructive/30"
+              >
+                {erro}
+              </div>
+            ) : null}
 
             <form onSubmit={enviar} className="mt-4 space-y-3.5">
               {modo === "criar" ? (
