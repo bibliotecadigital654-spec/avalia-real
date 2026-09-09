@@ -31,8 +31,6 @@ function TarefaDetalhe() {
 
   const [experiencia, setExperiencia] = useState<(typeof OPCOES)[number]>("Ótimo");
   const [comentario, setComentario] = useState("");
-  const [foto, setFoto] = useState<File | null>(null);
-  const [previa, setPrevia] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
   const { data: tarefa, isLoading } = useQuery({
@@ -44,12 +42,6 @@ function TarefaDetalhe() {
     },
   });
 
-  function escolherFoto(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null;
-    setFoto(file);
-    setPrevia(file ? URL.createObjectURL(file) : null);
-  }
-
   async function enviar() {
     if (!tarefa || !conta) return;
     const parsed = schema.safeParse({ experiencia, comentario });
@@ -57,20 +49,9 @@ function TarefaDetalhe() {
       toast.error(parsed.error.issues[0]?.message ?? "Confira as respostas");
       return;
     }
-    if (!foto) {
-      toast.error("Anexe uma foto para enviar a tarefa");
-      return;
-    }
 
     setEnviando(true);
     try {
-      const ext = foto.name.split(".").pop()?.toLowerCase() || "jpg";
-      const caminho = `${conta.userId}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("envios").upload(caminho, foto, {
-        contentType: foto.type || "image/jpeg",
-      });
-      if (upErr) throw upErr;
-
       const { error } = await supabase.from("submissions").insert({
         task_id: tarefa.id,
         user_id: conta.userId,
