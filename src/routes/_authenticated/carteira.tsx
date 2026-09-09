@@ -129,21 +129,41 @@ function CarteiraPage() {
           Valores aprovados pela equipe já entram aqui
         </p>
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 space-y-2 rounded-[16px] bg-primary-foreground/10 p-3">
           <input
             inputMode="decimal"
             value={valor}
             onChange={(e) => setValor(e.target.value)}
-            placeholder="Quanto quer resgatar?"
-            className="min-w-0 flex-1 rounded-full bg-primary-foreground/10 px-4 py-3 text-sm text-primary-foreground placeholder:text-primary-foreground/50 outline-none ring-1 ring-primary-foreground/20 focus:ring-2"
+            placeholder="Quanto quer sacar? (mín. R$ 20,00)"
+            className="w-full rounded-full bg-primary-foreground/10 px-4 py-3 text-sm text-primary-foreground placeholder:text-primary-foreground/50 outline-none ring-1 ring-primary-foreground/20 focus:ring-2"
+          />
+          <select
+            value={pixTipo}
+            onChange={(e) => setPixTipo(e.target.value)}
+            className="w-full rounded-full bg-primary-foreground/10 px-4 py-3 text-sm text-primary-foreground outline-none ring-1 ring-primary-foreground/20 focus:ring-2"
+          >
+            {TIPOS_PIX.map((t) => (
+              <option key={t.valor} value={t.valor} className="text-ink">
+                {t.label}
+              </option>
+            ))}
+          </select>
+          <input
+            value={pixChave}
+            onChange={(e) => setPixChave(e.target.value)}
+            placeholder="Sua chave Pix"
+            className="w-full rounded-full bg-primary-foreground/10 px-4 py-3 text-sm text-primary-foreground placeholder:text-primary-foreground/50 outline-none ring-1 ring-primary-foreground/20 focus:ring-2"
           />
           <button
             onClick={solicitar}
             disabled={enviando}
-            className="shrink-0 rounded-full bg-coin px-5 py-3 text-sm font-semibold text-ink shadow-coin transition-transform active:scale-[.98] disabled:opacity-60"
+            className="w-full rounded-full bg-coin px-5 py-3 text-sm font-semibold text-ink shadow-coin transition-transform active:scale-[.98] disabled:opacity-60"
           >
-            {enviando ? "…" : "Resgatar"}
+            {enviando ? "Enviando…" : "Solicitar Saque via Pix"}
           </button>
+          <p className="text-[11px] text-primary-foreground/60">
+            Valor mínimo de saque: {brl(SAQUE_MINIMO)}
+          </p>
         </div>
       </section>
 
