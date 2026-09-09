@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLicenca } from "@/hooks/useLicenca";
 import { useAuth } from "@/hooks/useAuth";
 import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
+import { criarCobrancaLicenca } from "@/lib/licenca.functions";
 
-const PIX_FICTICIO =
-  "00020126580014BR.GOV.BCB.PIX0136avaliareal-licenca-anual-simulada5204000053039865802BR5910AVALIAREAL6009SAO PAULO62070503***6304AB12";
 
 export function LicencaGate({ userId, children }: { userId?: string | undefined; children: ReactNode }) {
   const { licenca, carregando } = useLicenca(userId ?? null);
