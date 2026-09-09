@@ -2,8 +2,9 @@
 
 - [x] Cadastro e login (e-mail/senha + Google)
 - [x] Feed de tarefas com valor por tarefa
-- [x] Formulário da tarefa com perguntas e foto anexada
-- [x] Carteira: saldo, extrato e pedido de resgate
+- [x] Formulário da tarefa (100% digital)
+- [x] Carteira: saldo, extrato e saque via Pix (mínimo R$ 20,00)
 - [x] Ofertas externas (JSON simulado) com cálculo da parte do usuário
-- [x] Tela de administrador com aprovar/rejeitar e crédito automático do saldo
-- [ ] Definir quem é administrador (precisa de uma conta criada para receber o papel)
+- [x] Licença anual com cobrança Asaas e liberação automática
+- [x] Painel Master restrito ao e-mail do dono: visão geral, usuários, saques e envios
+- [x] Atualização em tempo real entre usuário e administrador
