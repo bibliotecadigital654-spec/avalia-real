@@ -17,6 +17,7 @@ import { Route as AuthenticatedCarteiraRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedOfertasRouteImport } from './routes/_authenticated/ofertas'
 import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
 import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
+import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const AuthenticatedTarefasIdRoute = AuthenticatedTarefasIdRouteImport.update({
   path: '/tarefas/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
+  id: '/api/public/postback',
+  path: '/api/public/postback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/postback': typeof ApiPublicPostbackRoute
   '/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRoutesByTo {
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/postback': typeof ApiPublicPostbackRoute
   '/tarefas': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRoutesById {
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/_authenticated/carteira': typeof AuthenticatedCarteiraRoute
   '/_authenticated/ofertas': typeof AuthenticatedOfertasRoute
   '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/postback': typeof ApiPublicPostbackRoute
   '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/carteira'
     | '/ofertas'
     | '/tarefas/$id'
+    | '/api/public/postback'
     | '/tarefas/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/carteira'
     | '/ofertas'
     | '/tarefas/$id'
+    | '/api/public/postback'
     | '/tarefas'
   id:
     | '__root__'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/_authenticated/carteira'
     | '/_authenticated/ofertas'
     | '/_authenticated/tarefas/$id'
+    | '/api/public/postback'
     | '/_authenticated/tarefas/'
   fileRoutesById: FileRoutesById
 }
@@ -123,6 +135,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -183,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTarefasIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/postback': {
+      id: '/api/public/postback'
+      path: '/api/public/postback'
+      fullPath: '/api/public/postback'
+      preLoaderRoute: typeof ApiPublicPostbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -209,6 +229,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicPostbackRoute: ApiPublicPostbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
