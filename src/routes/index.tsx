@@ -97,9 +97,17 @@ function Index() {
   const campo =
     "mt-1.5 w-full rounded-[12px] bg-background px-3 py-2.5 text-sm ring-1 ring-border outline-none focus:ring-2 focus:ring-ring";
 
+  function falhar(msg: string) {
+    setSucesso(null);
+    setErro(msg);
+    toast.error(msg);
+  }
+
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     setEnviando(true);
+    setErro(null);
+    setSucesso(null);
     try {
       if (modo === "criar") {
         const parsed = cadastroSchema.safeParse({
@@ -109,7 +117,7 @@ function Index() {
           pix_key: pix,
         });
         if (!parsed.success) {
-          toast.error(parsed.error.issues[0]?.message ?? "Confira os dados");
+          falhar(parsed.error.issues[0]?.message ?? "Confira os dados");
           return;
         }
         const { data, error } = await supabase.auth.signUp({
@@ -125,17 +133,20 @@ function Index() {
           },
         });
         if (error) throw error;
+        setSenha("");
         if (!data.session) {
-          toast.success("Conta criada! Confirme seu e-mail para entrar.");
-          setModo("entrar");
+          setSucesso(
+            `Conta criada para ${parsed.data.email}! Enviamos um e-mail de confirmação — clique no link para entrar.`,
+          );
+          toast.success("Conta criada! Confirme seu e-mail.");
           return;
         }
+        setSucesso("Conta criada com sucesso! Você já está conectado.");
         toast.success("Conta criada!");
-        setModo(null);
       } else {
         const parsed = loginSchema.safeParse({ email, senha });
         if (!parsed.success) {
-          toast.error(parsed.error.issues[0]?.message ?? "Confira os dados");
+          falhar(parsed.error.issues[0]?.message ?? "Confira os dados");
           return;
         }
         const { error } = await supabase.auth.signInWithPassword({
@@ -147,7 +158,7 @@ function Index() {
         setModo(null);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível continuar");
+      falhar(mensagemAuth(err));
     } finally {
       setEnviando(false);
     }
