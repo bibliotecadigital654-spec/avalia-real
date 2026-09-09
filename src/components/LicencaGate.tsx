@@ -1,18 +1,30 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLicenca } from "@/hooks/useLicenca";
+import { useAuth } from "@/hooks/useAuth";
+import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 
 const PIX_FICTICIO =
   "00020126580014BR.GOV.BCB.PIX0136avaliareal-licenca-anual-simulada5204000053039865802BR5910AVALIAREAL6009SAO PAULO62070503***6304AB12";
 
 export function LicencaGate({ userId, children }: { userId?: string | undefined; children: ReactNode }) {
   const { licenca, carregando } = useLicenca(userId ?? null);
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [mostrarPix, setMostrarPix] = useState(false);
   const [ativando, setAtivando] = useState(false);
+  const vitalicia = temLicencaVitalicia(user?.email);
+  const sincronizado = useRef(false);
 
+  useEffect(() => {
+    if (!vitalicia || !userId || sincronizado.current) return;
+    sincronizado.current = true;
+    void supabase.rpc("aplicar_licenca_vitalicia");
+  }, [vitalicia, userId]);
+
+  if (vitalicia) return <>{children}</>;
   if (!userId || carregando || !licenca) return <>{children}</>;
   if (licenca.ativa) return <>{children}</>;
 

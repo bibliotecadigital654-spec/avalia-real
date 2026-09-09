@@ -248,6 +248,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      aplicar_licenca_vitalicia: {
+        Args: never
+        Returns: {
+          created_at: string
+          data_assinatura: string | null
+          id: string
+          nome: string
+          nome_completo: string
+          pix_key: string | null
+          saldo: number
+          status_licenca: string
+          validade_licenca: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       ativar_licenca: {
         Args: never
         Returns: {
@@ -272,6 +292,7 @@ export type Database = {
         Args: { _tarefa_id: string; _user_id: string; _valor: number }
         Returns: number
       }
+      email_licenca_vitalicia: { Args: { _email: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
