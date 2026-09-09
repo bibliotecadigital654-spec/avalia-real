@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -47,7 +47,7 @@ function CarteiraPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("payouts")
-        .select("id, valor, status, created_at")
+        .select("id, valor, status, created_at, pix_tipo, pix_chave")
         .order("created_at", { ascending: false })
         .limit(10);
       if (error) throw error;
@@ -55,21 +55,54 @@ function CarteiraPage() {
     },
   });
 
+  useEffect(() => {
+    const canal = supabase
+      .channel("carteira-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "payouts" }, () => {
+        void queryClient.invalidateQueries({ queryKey: ["resgates"] });
+        void queryClient.invalidateQueries({ queryKey: ["conta"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "transactions" }, () => {
+        void queryClient.invalidateQueries({ queryKey: ["extrato"] });
+        void queryClient.invalidateQueries({ queryKey: ["conta"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, () => {
+        void queryClient.invalidateQueries({ queryKey: ["conta"] });
+      })
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(canal);
+    };
+  }, [queryClient]);
+
   async function solicitar() {
     const numero = Number(valor.replace(",", "."));
     if (!Number.isFinite(numero) || numero <= 0) {
-      toast.error("Informe um valor válido para resgatar");
+      toast.error("Informe um valor válido para sacar");
+      return;
+    }
+    if ((conta?.saldo ?? 0) < SAQUE_MINIMO || numero < SAQUE_MINIMO) {
+      toast.error("Saldo insuficiente. O valor mínimo para saque é de R$ 20,00.");
       return;
     }
     if (numero > (conta?.saldo ?? 0)) {
-      toast.error("Você não tem saldo suficiente para esse valor");
+      toast.error("Saldo insuficiente. O valor mínimo para saque é de R$ 20,00.");
+      return;
+    }
+    if (pixChave.trim().length < 4) {
+      toast.error("Informe a sua chave Pix");
       return;
     }
     setEnviando(true);
     try {
-      const { error } = await supabase.rpc("solicitar_resgate", { _valor: numero });
+      const { error } = await supabase.rpc("solicitar_resgate", {
+        _valor: numero,
+        _pix_tipo: pixTipo,
+        _pix_chave: pixChave.trim(),
+      });
       if (error) throw error;
       setValor("");
+      setPixChave("");
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["conta"] }),
         queryClient.invalidateQueries({ queryKey: ["resgates"] }),
