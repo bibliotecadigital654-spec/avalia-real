@@ -7,6 +7,13 @@ import { useConta } from "@/hooks/useConta";
 
 type NavItem = { to: string; label: string; glyph: string };
 
+function saudacao(): string {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return "Bom dia";
+  if (h >= 12 && h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
 const NAV: NavItem[] = [
   { to: "/tarefas", label: "Tarefas", glyph: "☰" },
   { to: "/ofertas", label: "Ofertas", glyph: "◆" },
@@ -49,7 +56,7 @@ export function AppShell({
             <div className="leading-none">
               <p className="font-display text-base font-semibold tracking-tight">AvaliaReal</p>
               <p className="text-[11px] font-medium text-muted-foreground">
-                {nome ? `Boa, ${nome}` : "microtarefas pagas"}
+                {nome ? `${saudacao()}, ${nome}!` : "microtarefas pagas"}
               </p>
             </div>
           </div>
