@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { brl } from "@/lib/format";
+import { mensagemAuth } from "@/lib/erros-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -86,6 +87,8 @@ function Index() {
   const saldo = useSaldoTempoReal(user?.id ?? null);
 
   const [modo, setModo] = useState<"criar" | "entrar" | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [sucesso, setSucesso] = useState<string | null>(null);
   const [nomeCompleto, setNomeCompleto] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -95,9 +98,17 @@ function Index() {
   const campo =
     "mt-1.5 w-full rounded-[12px] bg-background px-3 py-2.5 text-sm ring-1 ring-border outline-none focus:ring-2 focus:ring-ring";
 
+  function falhar(msg: string) {
+    setSucesso(null);
+    setErro(msg);
+    toast.error(msg);
+  }
+
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     setEnviando(true);
+    setErro(null);
+    setSucesso(null);
     try {
       if (modo === "criar") {
         const parsed = cadastroSchema.safeParse({
@@ -107,7 +118,7 @@ function Index() {
           pix_key: pix,
         });
         if (!parsed.success) {
-          toast.error(parsed.error.issues[0]?.message ?? "Confira os dados");
+          falhar(parsed.error.issues[0]?.message ?? "Confira os dados");
           return;
         }
         const { data, error } = await supabase.auth.signUp({
@@ -123,17 +134,20 @@ function Index() {
           },
         });
         if (error) throw error;
+        setSenha("");
         if (!data.session) {
-          toast.success("Conta criada! Confirme seu e-mail para entrar.");
-          setModo("entrar");
+          setSucesso(
+            `Conta criada para ${parsed.data.email}! Enviamos um e-mail de confirmação — clique no link para entrar.`,
+          );
+          toast.success("Conta criada! Confirme seu e-mail.");
           return;
         }
+        setSucesso("Conta criada com sucesso! Você já está conectado.");
         toast.success("Conta criada!");
-        setModo(null);
       } else {
         const parsed = loginSchema.safeParse({ email, senha });
         if (!parsed.success) {
-          toast.error(parsed.error.issues[0]?.message ?? "Confira os dados");
+          falhar(parsed.error.issues[0]?.message ?? "Confira os dados");
           return;
         }
         const { error } = await supabase.auth.signInWithPassword({
@@ -145,7 +159,7 @@ function Index() {
         setModo(null);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível continuar");
+      falhar(mensagemAuth(err));
     } finally {
       setEnviando(false);
     }
@@ -204,6 +218,8 @@ function Index() {
                 onClick={() => {
                   setModo("criar");
                   setSenha("");
+                  setErro(null);
+                  setSucesso(null);
                 }}
                 className="block w-full rounded-full bg-gradient-brand py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98]"
               >
@@ -213,6 +229,8 @@ function Index() {
                 onClick={() => {
                   setModo("entrar");
                   setSenha("");
+                  setErro(null);
+                  setSucesso(null);
                 }}
                 className="block w-full rounded-full bg-card py-3 text-center text-sm font-semibold text-foreground ring-1 ring-border transition-transform active:scale-[.98]"
               >
@@ -238,13 +256,46 @@ function Index() {
                 </p>
               </div>
               <button
-                onClick={() => setModo(null)}
+                onClick={() => {
+                  setModo(null);
+                  setErro(null);
+                  setSucesso(null);
+                }}
                 aria-label="Fechar"
                 className="rounded-full px-2 py-1 text-sm text-muted-foreground"
               >
                 ✕
               </button>
             </div>
+
+            {sucesso ? (
+              <div
+                role="status"
+                className="mt-4 rounded-[16px] bg-gradient-safe p-4 text-primary-foreground shadow-safe"
+              >
+                <p className="text-sm font-semibold">✓ Tudo certo!</p>
+                <p className="mt-1 text-xs text-primary-foreground/80">{sucesso}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSucesso(null);
+                    setModo(session ? null : "entrar");
+                  }}
+                  className="mt-3 w-full rounded-full bg-background/90 py-2.5 text-xs font-semibold text-foreground"
+                >
+                  {session ? "Continuar" : "Ir para o login"}
+                </button>
+              </div>
+            ) : null}
+
+            {erro ? (
+              <div
+                role="alert"
+                className="mt-4 rounded-[16px] bg-destructive/10 p-3 text-xs font-medium text-destructive ring-1 ring-destructive/30"
+              >
+                {erro}
+              </div>
+            ) : null}
 
             <form onSubmit={enviar} className="mt-4 space-y-3.5">
               {modo === "criar" ? (
