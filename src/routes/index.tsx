@@ -86,6 +86,8 @@ function Index() {
   const saldo = useSaldoTempoReal(user?.id ?? null);
 
   const [modo, setModo] = useState<"criar" | "entrar" | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [sucesso, setSucesso] = useState<string | null>(null);
   const [nomeCompleto, setNomeCompleto] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
