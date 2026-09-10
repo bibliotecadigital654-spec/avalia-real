@@ -41,7 +41,12 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
     setGerando(true);
     try {
       const res = await criarCobranca({ data: { nome, cpfCnpj: documento } });
-      setCobranca({ paymentId: res.paymentId, url: res.url });
+      setCobranca({
+        paymentId: res.paymentId,
+        url: res.url,
+        pixQrCode: res.pixQrCode,
+        pixCopiaECola: res.pixCopiaECola,
+      });
       await queryClient.invalidateQueries();
       if (res.url) window.open(res.url, "_blank", "noopener,noreferrer");
       toast.success("Cobrança gerada! Conclua o pagamento na página do Asaas.");
