@@ -95,11 +95,12 @@ function CarteiraPage() {
     }
     setEnviando(true);
     try {
-      const { error } = await supabase.rpc("solicitar_resgate", {
+      const payload = {
         _valor: numero,
         _pix_tipo: pixTipo,
         _pix_chave: pixChave.trim(),
-      });
+      };
+      const { error } = await supabase.rpc("solicitar_resgate", payload);
       if (error) throw error;
       setValor("");
       setPixChave("");
