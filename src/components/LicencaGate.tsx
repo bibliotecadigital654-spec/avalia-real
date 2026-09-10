@@ -48,8 +48,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
         pixCopiaECola: res.pixCopiaECola,
       });
       await queryClient.invalidateQueries();
-      if (res.url) window.open(res.url, "_blank", "noopener,noreferrer");
-      toast.success("Cobrança gerada! Conclua o pagamento na página do Asaas.");
+      toast.success("Pix gerado! Escaneie o QR Code ou copie o código.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível gerar a cobrança");
     } finally {
@@ -81,42 +80,34 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
           ) : null}
 
           {cobranca ? (
-            <div className="mt-5 rounded-[16px] bg-background p-4 ring-1 ring-border">
-              <p className="text-xs font-semibold text-foreground/70">Cobrança gerada</p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Escaneie o QR Code Pix abaixo ou use o código copia e cola. A liberação é automática
-                assim que o pagamento é confirmado.
-              </p>
+            <div className="mt-5 flex flex-col items-center rounded-[16px] bg-background p-4 text-center ring-1 ring-border">
+              <p className="text-xs font-semibold text-foreground/70">Pague com Pix</p>
               {cobranca.pixQrCode ? (
                 <img
                   src={cobranca.pixQrCode}
                   alt="QR Code Pix da licença anual do AvaliaReal"
-                  className="mx-auto mt-3 h-48 w-48 rounded-[12px] bg-card p-2 ring-1 ring-border"
+                  className="mt-3 h-52 w-52 rounded-[12px] bg-card p-2 ring-1 ring-border"
                 />
               ) : null}
               {cobranca.pixCopiaECola ? (
-                <button
-                  onClick={() => {
-                    void navigator.clipboard.writeText(cobranca.pixCopiaECola!);
-                    toast.success("Código Pix copiado!");
-                  }}
-                  className="mt-3 w-full rounded-full bg-card py-3 text-xs font-semibold ring-1 ring-border"
-                >
-                  Copiar código Pix
-                </button>
+                <>
+                  <p className="mt-4 w-full rounded-[12px] bg-card px-3 py-2.5 font-mono text-[11px] break-all ring-1 ring-border">
+                    {cobranca.pixCopiaECola}
+                  </p>
+                  <button
+                    onClick={() => {
+                      void navigator.clipboard.writeText(cobranca.pixCopiaECola!);
+                      toast.success("Código Pix copiado!");
+                    }}
+                    className="mt-3 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98]"
+                  >
+                    Copiar Código Pix
+                  </button>
+                </>
               ) : null}
-              {cobranca.url ? (
-                <a
-                  href={cobranca.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 block w-full rounded-full bg-gradient-safe py-3.5 text-center text-sm font-semibold text-primary-foreground shadow-safe"
-                >
-                  Abrir página de pagamento
-                </a>
-              ) : null}
-              <p className="mt-3 font-mono text-[11px] break-all text-muted-foreground">
-                Código da cobrança: {cobranca.paymentId}
+              <p className="mt-4 text-xs text-muted-foreground">
+                Aguardando pagamento... Assim que concluir no app do seu banco, seu acesso será
+                liberado automaticamente.
               </p>
             </div>
           ) : abrirForm ? (
