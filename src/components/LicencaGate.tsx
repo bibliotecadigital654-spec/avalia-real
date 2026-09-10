@@ -18,7 +18,12 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   const [nome, setNome] = useState("");
   const [documento, setDocumento] = useState("");
   const [gerando, setGerando] = useState(false);
-  const [cobranca, setCobranca] = useState<{ paymentId: string; url: string | null } | null>(null);
+  const [cobranca, setCobranca] = useState<{
+    paymentId: string;
+    url: string | null;
+    pixQrCode?: string | null;
+    pixCopiaECola?: string | null;
+  } | null>(null);
   const vitalicia = temLicencaVitalicia(user?.email);
   const sincronizado = useRef(false);
 
