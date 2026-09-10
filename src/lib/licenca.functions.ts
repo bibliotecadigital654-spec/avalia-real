@@ -48,7 +48,7 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
       headers,
       body: JSON.stringify({
         customer: cliente.id,
-        billingType: "UNDEFINED",
+        billingType: "PIX",
         value: VALOR_LICENCA,
         dueDate: vencimento,
         description: "AvaliaReal — Licença anual (365 dias)",
