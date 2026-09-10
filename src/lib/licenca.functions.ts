@@ -17,10 +17,15 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => entrada.parse(data))
   .handler(async ({ data, context }) => {
-    const apiKey = process.env["ASAAS_API_KEY"];
+    const apiKey = (process.env["ASAAS_API_KEY"] ?? "").trim();
     if (!apiKey) throw new Error("Pagamento indisponível: chave do Asaas não configurada.");
-    const base = process.env["ASAAS_API_URL"] ?? "https://api.asaas.com/v3";
-    const headers = { "Content-Type": "application/json", access_token: apiKey };
+    // Produção real (sem sandbox). Host oficial de API do Asaas em produção.
+    const base = "https://api.asaas.com/v3";
+    const headers = {
+      "Content-Type": "application/json",
+      "User-Agent": "AvaliaReal_App",
+      access_token: apiKey,
+    };
 
     const email = (context.claims as { email?: string } | null)?.email ?? undefined;
 
