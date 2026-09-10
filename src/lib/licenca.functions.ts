@@ -17,10 +17,15 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => entrada.parse(data))
   .handler(async ({ data, context }) => {
-    const apiKey = process.env["ASAAS_API_KEY"];
+    const apiKey = (process.env["ASAAS_API_KEY"] ?? "").trim();
     if (!apiKey) throw new Error("Pagamento indisponível: chave do Asaas não configurada.");
-    const base = process.env["ASAAS_API_URL"] ?? "https://api.asaas.com/v3";
-    const headers = { "Content-Type": "application/json", access_token: apiKey };
+    // Produção real (sem sandbox). Host oficial de API do Asaas em produção.
+    const base = "https://api.asaas.com/v3";
+    const headers = {
+      "Content-Type": "application/json",
+      "User-Agent": "AvaliaReal_App",
+      access_token: apiKey,
+    };
 
     const email = (context.claims as { email?: string } | null)?.email ?? undefined;
 
@@ -43,7 +48,7 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
       headers,
       body: JSON.stringify({
         customer: cliente.id,
-        billingType: "UNDEFINED",
+        billingType: "PIX",
         value: VALOR_LICENCA,
         dueDate: vencimento,
         description: "AvaliaReal — Licença anual (365 dias)",
@@ -68,9 +73,25 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
+    // QR Code Pix em produção: /payments/{id}/pixQrCode
+    let pixQrCode: string | null = null;
+    let pixCopiaECola: string | null = null;
+    try {
+      const respPix = await fetch(`${base}/payments/${cobranca.id}/pixQrCode`, { headers });
+      const pix = (await respPix.json()) as { encodedImage?: string; payload?: string };
+      if (respPix.ok) {
+        pixQrCode = pix.encodedImage ? `data:image/png;base64,${pix.encodedImage}` : null;
+        pixCopiaECola = pix.payload ?? null;
+      }
+    } catch {
+      pixQrCode = null;
+    }
+
     return {
       paymentId: cobranca.id,
       url: cobranca.invoiceUrl ?? null,
       valor: VALOR_LICENCA,
+      pixQrCode,
+      pixCopiaECola,
     };
   });
