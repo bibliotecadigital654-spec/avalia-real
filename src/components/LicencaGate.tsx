@@ -84,9 +84,27 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
             <div className="mt-5 rounded-[16px] bg-background p-4 ring-1 ring-border">
               <p className="text-xs font-semibold text-foreground/70">Cobrança gerada</p>
               <p className="mt-2 text-xs text-muted-foreground">
-                Pague por Pix, boleto ou cartão na página segura do Asaas. A liberação é automática
+                Escaneie o QR Code Pix abaixo ou use o código copia e cola. A liberação é automática
                 assim que o pagamento é confirmado.
               </p>
+              {cobranca.pixQrCode ? (
+                <img
+                  src={cobranca.pixQrCode}
+                  alt="QR Code Pix da licença anual do AvaliaReal"
+                  className="mx-auto mt-3 h-48 w-48 rounded-[12px] bg-card p-2 ring-1 ring-border"
+                />
+              ) : null}
+              {cobranca.pixCopiaECola ? (
+                <button
+                  onClick={() => {
+                    void navigator.clipboard.writeText(cobranca.pixCopiaECola!);
+                    toast.success("Código Pix copiado!");
+                  }}
+                  className="mt-3 w-full rounded-full bg-card py-3 text-xs font-semibold ring-1 ring-border"
+                >
+                  Copiar código Pix
+                </button>
+              ) : null}
               {cobranca.url ? (
                 <a
                   href={cobranca.url}
