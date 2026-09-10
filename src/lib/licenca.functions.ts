@@ -73,9 +73,25 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
+    // QR Code Pix em produção: /payments/{id}/pixQrCode
+    let pixQrCode: string | null = null;
+    let pixCopiaECola: string | null = null;
+    try {
+      const respPix = await fetch(`${base}/payments/${cobranca.id}/pixQrCode`, { headers });
+      const pix = (await respPix.json()) as { encodedImage?: string; payload?: string };
+      if (respPix.ok) {
+        pixQrCode = pix.encodedImage ? `data:image/png;base64,${pix.encodedImage}` : null;
+        pixCopiaECola = pix.payload ?? null;
+      }
+    } catch {
+      pixQrCode = null;
+    }
+
     return {
       paymentId: cobranca.id,
       url: cobranca.invoiceUrl ?? null,
       valor: VALOR_LICENCA,
+      pixQrCode,
+      pixCopiaECola,
     };
   });
