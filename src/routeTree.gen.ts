@@ -18,6 +18,7 @@ import { Route as AuthenticatedOfertasRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
 import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
 import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
+import { Route as ApiPublicBitlabsWebhookRouteImport } from './routes/api/public/bitlabs-webhook'
 import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +66,11 @@ const ApiPublicAsaasWebhookRoute = ApiPublicAsaasWebhookRouteImport.update({
   path: '/api/public/asaas-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBitlabsWebhookRoute = ApiPublicBitlabsWebhookRouteImport.update({
+  id: '/api/public/bitlabs-webhook',
+  path: '/api/public/bitlabs-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
   id: '/api/public/postback',
   path: '/api/public/postback',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
+  '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
+  '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/tarefas': typeof AuthenticatedTarefasIndexRoute
 }
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/_authenticated/ofertas': typeof AuthenticatedOfertasRoute
   '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
+  '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/tarefas/$id'
     | '/api/public/asaas-webhook'
+    | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
     | '/tarefas/'
   fileRoutesByTo: FileRoutesByTo
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/ofertas'
     | '/tarefas/$id'
     | '/api/public/asaas-webhook'
+    | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
     | '/tarefas'
   id:
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ofertas'
     | '/_authenticated/tarefas/$id'
     | '/api/public/asaas-webhook'
+    | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
     | '/_authenticated/tarefas/'
   fileRoutesById: FileRoutesById
@@ -148,6 +160,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiPublicAsaasWebhookRoute: typeof ApiPublicAsaasWebhookRoute
+  ApiPublicBitlabsWebhookRoute: typeof ApiPublicBitlabsWebhookRoute
   ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
 }
 
@@ -216,6 +229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAsaasWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bitlabs-webhook': {
+      id: '/api/public/bitlabs-webhook'
+      path: '/api/public/bitlabs-webhook'
+      fullPath: '/api/public/bitlabs-webhook'
+      preLoaderRoute: typeof ApiPublicBitlabsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/postback': {
       id: '/api/public/postback'
       path: '/api/public/postback'
@@ -250,6 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiPublicAsaasWebhookRoute: ApiPublicAsaasWebhookRoute,
+  ApiPublicBitlabsWebhookRoute: ApiPublicBitlabsWebhookRoute,
   ApiPublicPostbackRoute: ApiPublicPostbackRoute,
 }
 export const routeTree = rootRouteImport

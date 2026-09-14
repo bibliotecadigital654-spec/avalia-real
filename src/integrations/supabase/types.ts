@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      external_rewards: {
+        Row: {
+          created_at: string
+          id: string
+          processed_at: string
+          provider: string
+          taxa_conversao: number
+          transaction_id: string
+          updated_at: string
+          user_id: string
+          valor_creditado: number
+          valor_origem: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          processed_at?: string
+          provider: string
+          taxa_conversao: number
+          transaction_id: string
+          updated_at?: string
+          user_id: string
+          valor_creditado: number
+          valor_origem: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          processed_at?: string
+          provider?: string
+          taxa_conversao?: number
+          transaction_id?: string
+          updated_at?: string
+          user_id?: string
+          valor_creditado?: number
+          valor_origem?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_rewards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenca_pedidos: {
         Row: {
           created_at: string
@@ -370,6 +417,20 @@ export type Database = {
       creditar_recompensa: {
         Args: { _tarefa_id: string; _user_id: string; _valor: number }
         Returns: number
+      }
+      creditar_recompensa_externa: {
+        Args: {
+          _provider: string
+          _taxa_conversao: number
+          _transaction_id: string
+          _user_id: string
+          _valor_creditado: number
+          _valor_origem: number
+        }
+        Returns: {
+          creditado: boolean
+          saldo_atual: number
+        }[]
       }
       email_licenca_vitalicia: { Args: { _email: string }; Returns: boolean }
       has_role: {
