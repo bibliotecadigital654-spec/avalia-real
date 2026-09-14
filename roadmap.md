@@ -8,3 +8,5 @@
 - [x] Licença anual com cobrança Asaas e liberação automática
 - [x] Painel Master restrito ao e-mail do dono: visão geral, usuários, saques e envios
 - [x] Atualização em tempo real entre usuário e administrador
+- [x] Estrutura segura do mural e webhook oficial da BitLabs
+- [ ] Ativar o mural BitLabs após receber o token e o segredo da conta aprovada
