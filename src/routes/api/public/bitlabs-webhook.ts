@@ -41,10 +41,14 @@ async function lerParametros(request: Request) {
   }
 
   return {
-    uid: valores.uid,
-    val: valores.val,
-    tx: valores.tx ?? valores.transaction_id ?? valores.transactionId ?? valores.hash,
-    hash: valores.hash,
+    uid: valores["uid"],
+    val: valores["val"],
+    tx:
+      valores["tx"] ??
+      valores["transaction_id"] ??
+      valores["transactionId"] ??
+      valores["hash"],
+    hash: valores["hash"],
   };
 }
 

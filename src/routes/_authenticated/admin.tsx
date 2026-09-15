@@ -10,6 +10,19 @@ import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { brl, dataHora } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  head: () => ({
+    meta: [
+      { title: "Painel Master | AvaliaReal" },
+      { name: "description", content: "Gestão restrita de usuários, tarefas e saques do AvaliaReal." },
+      { property: "og:title", content: "Painel Master | AvaliaReal" },
+      {
+        property: "og:description",
+        content: "Gestão restrita de usuários, tarefas e saques do AvaliaReal.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: AdminPage,
 });
 
