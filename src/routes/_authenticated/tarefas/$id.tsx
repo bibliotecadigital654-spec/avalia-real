@@ -9,6 +9,19 @@ import { useConta } from "@/hooks/useConta";
 import { brl } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/tarefas/$id")({
+  head: () => ({
+    meta: [
+      { title: "Responder tarefa | AvaliaReal" },
+      { name: "description", content: "Responda à tarefa digital selecionada no AvaliaReal." },
+      { property: "og:title", content: "Responder tarefa | AvaliaReal" },
+      {
+        property: "og:description",
+        content: "Responda à tarefa digital selecionada no AvaliaReal.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: TarefaDetalhe,
 });
 

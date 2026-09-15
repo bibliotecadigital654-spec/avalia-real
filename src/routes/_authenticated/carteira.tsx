@@ -8,6 +8,19 @@ import { useConta } from "@/hooks/useConta";
 import { brl, dataHora } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/carteira")({
+  head: () => ({
+    meta: [
+      { title: "Minha carteira | AvaliaReal" },
+      { name: "description", content: "Acompanhe seu saldo, extrato e solicitações de saque Pix." },
+      { property: "og:title", content: "Minha carteira | AvaliaReal" },
+      {
+        property: "og:description",
+        content: "Acompanhe seu saldo, extrato e solicitações de saque Pix.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: CarteiraPage,
 });
 
