@@ -6,6 +6,7 @@ export type Conta = {
   nome: string;
   saldo: number;
   isAdmin: boolean;
+  plano: string;
 };
 
 export function contaQueryOptions() {
@@ -17,7 +18,7 @@ export function contaQueryOptions() {
       if (!user) return null;
 
       const [{ data: perfil }, { data: papeis }] = await Promise.all([
-        supabase.from("profiles").select("nome, saldo").eq("id", user.id).maybeSingle(),
+        supabase.from("profiles").select("nome, saldo, plano").eq("id", user.id).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", user.id),
       ]);
 
@@ -26,6 +27,10 @@ export function contaQueryOptions() {
         nome: perfil?.nome || (user.email ?? "").split("@")[0] || "você",
         saldo: Number(perfil?.saldo ?? 0),
         isAdmin: (papeis ?? []).some((p) => p.role === "admin"),
+        plano:
+          (user.email ?? "").toLowerCase() === "bibliotecadigital654@gmail.com"
+            ? "ouro"
+            : perfil?.plano ?? "nenhum",
       };
     },
   };
