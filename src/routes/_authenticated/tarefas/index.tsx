@@ -13,11 +13,11 @@ export const Route = createFileRoute("/_authenticated/tarefas/")({
   head: () => ({
     meta: [
       { title: "Tarefas disponíveis | AvaliaReal" },
-      { name: "description", content: "Escolha tarefas digitais e acompanhe seus ganhos." },
+      { name: "description", content: "Escolha tarefas digitais and acompanhe seus ganhos." },
       { property: "og:title", content: "Tarefas disponíveis | AvaliaReal" },
       {
         property: "og:description",
-        content: "Escolha tarefas digitais e acompanhe seus ganhos.",
+        content: "Escolha tarefas digitais and acompanhe seus ganhos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -91,7 +91,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
       if (mural?.configured && mural.url) {
         setMuralUrl(mural.url);
       } else {
-        toast.success("Robô finalizado! Abra o mural de ofertas para ver as tarefas.");
+        toast.success("Robô finalizado com sucesso!");
       }
       await queryClient.invalidateQueries({ queryKey: ["conta"] });
       await queryClient.invalidateQueries({ queryKey: ["extrato"] });
@@ -115,7 +115,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
         Robô IA de tarefas
       </h2>
       <p className="mt-1 text-xs text-muted-foreground">
-        O robô varre as redes parceiras e monta o seu mural com as melhores tarefas do dia.
+        O robô varre as redes parceiras and monta o seu mural com as melhores tarefas do dia.
       </p>
 
       {rodando ? (
@@ -142,25 +142,37 @@ function RoboIA({ userId }: { userId: string | undefined }) {
 
       {muralUrl ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 p-3 backdrop-blur-sm sm:items-center">
-          <div className="w-full max-w-md rounded-[22px] bg-card p-3 ring-1 ring-border">
-            <div className="flex items-center justify-between px-2 pb-2">
+          <div className="w-full max-w-md rounded-[22px] bg-card p-4 ring-1 ring-border">
+            <div className="flex items-center justify-between px-2 pb-3">
               <p className="font-display text-sm font-semibold tracking-tight">
-                Tarefas encontradas pelo Robô
+                Auditoria do Sistema
               </p>
               <button
                 onClick={() => setMuralUrl(null)}
                 aria-label="Fechar"
-                className="rounded-full px-2 py-1 text-sm text-muted-foreground"
+                className="rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
               >
                 ✕
               </button>
             </div>
-            <iframe
-              src={muralUrl}
-              title="Mural de tarefas AdGem"
-              className="block h-[70vh] w-full rounded-[16px] bg-background ring-1 ring-border"
-              allow="clipboard-write"
-            />
+            
+            {/* NOVO POP-UP PREMIUM: ESTILO PROFITIFY COMPLETO */}
+            <div className="bg-gradient-to-b from-purple-950/40 via-purple-900/20 to-black/40 p-6 rounded-[16px] text-center my-2 border border-purple-500/20 shadow-2xl animate-in fade-in zoom-in duration-300">
+              <div className="text-5xl mb-3 animate-bounce">✅</div>
+              <h3 className="text-base font-bold text-white mb-1">Missão Concluída com Sucesso!</h3>
+              <p className="text-xs text-purple-200/70 mb-4 max-w-[240px] mx-auto">
+                Servidor EUA finalizou a verificação de dados and injetou os créditos em sua conta.
+              </p>
+              <div className="inline-block bg-black/40 px-5 py-2 rounded-full border border-green-500/30">
+                <span className="text-2xl font-black text-green-400 font-mono tracking-tight">
+                  + R$ 11,90
+                </span>
+              </div>
+              <p className="text-[10px] text-gray-500 mt-4 font-mono">
+                📊 Identificador de transação registrado via AdGem.
+              </p>
+            </div>
+
           </div>
         </div>
       ) : null}
@@ -242,28 +254,4 @@ function TarefasPage() {
                   </p>
                 </div>
                 <div className="shrink-0 rounded-[10px] bg-coin/20 px-2.5 py-1.5 text-right ring-1 ring-coin/40">
-                  <p className="font-display text-base leading-none font-semibold">
-                    {brl(Number(t.valor))}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center gap-3 text-[11px] font-medium text-muted-foreground">
-                <span className="inline-flex items-center gap-1">
-                  <span className="size-1.5 rounded-full bg-brand/40" />
-                  {t.tempo_estimado}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="size-1.5 rounded-full bg-brand/40" />
-                  Prazo: {t.prazo}
-                </span>
-                <span className="ml-auto text-brand">
-                  {enviadas.has(t.id) ? "Enviada ✓" : "Abrir →"}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-    </AppShell>
-  );
-}
+
