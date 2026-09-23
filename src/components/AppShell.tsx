@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { PainelInstitucional } from "@/components/RodapeInstitucional";
 
 type NavItem = { to: string; label: string; glyph: string };
 
