@@ -10,3 +10,4 @@
 - [x] Atualização em tempo real entre usuário e administrador
 - [x] Estrutura segura do mural e webhook oficial da BitLabs
 - [x] Ativar o mural BitLabs com credenciais reais e validar crédito no extrato e na carteira
+- [x] Liberar temporariamente a área interna para auditoria sem o paywall de licença
