@@ -1,12 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const URL_PADRAO = "https://adunits.adgem.com/wall?appid=33643&playerid=";
-
 export const obterMuralAdGem = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const appId = (process.env["ADGEM_APP_ID"] ?? "").trim();
+    // Forçando a URL real do mural do aplicativo diretamente na engenharia do backend
+    const base = "https://adgem.com";
 
     let url: URL;
     try {
@@ -18,7 +17,6 @@ export const obterMuralAdGem = createServerFn({ method: "GET" })
 
     // Identificador do usuário logado injetado no parâmetro oficial da AdGem.
     url.searchParams.set("playerid", context.userId);
-    if (appId && !url.searchParams.has("appid")) url.searchParams.set("appid", appId);
 
     return { configured: true as const, url: url.toString() };
   });
