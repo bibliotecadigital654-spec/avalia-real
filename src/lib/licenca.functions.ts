@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+const VALORES: Record<string, number> = { bronze: 47, prata: 97, ouro: 147 };
+
 const entrada = z.object({
   nome: z.string().trim().min(2).max(120),
   cpfCnpj: z
@@ -9,9 +11,8 @@ const entrada = z.object({
     .trim()
     .transform((v) => v.replace(/\D/g, ""))
     .refine((v) => v.length === 11 || v.length === 14, "Informe um CPF ou CNPJ válido"),
+  plano: z.enum(["bronze", "prata", "ouro"]),
 });
-
-const VALOR_LICENCA = 49.9;
 
 export const criarCobrancaLicenca = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -19,6 +20,7 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const apiKey = (process.env["ASAAS_API_KEY"] ?? "").trim();
     if (!apiKey) throw new Error("Pagamento indisponível: chave do Asaas não configurada.");
+    const valor = VALORES[data.plano] ?? 47;
     // Produção real (sem sandbox). Host oficial de API do Asaas em produção.
     const base = "https://api.asaas.com/v3";
     const headers = {
@@ -39,7 +41,9 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
       errors?: { description?: string }[];
     };
     if (!respCliente.ok || !cliente.id) {
-      throw new Error(cliente.errors?.[0]?.description ?? "Não foi possível criar o cadastro de cobrança.");
+      throw new Error(
+        cliente.errors?.[0]?.description ?? "Não foi possível criar o cadastro de cobrança.",
+      );
     }
 
     const vencimento = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
@@ -49,9 +53,9 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
       body: JSON.stringify({
         customer: cliente.id,
         billingType: "PIX",
-        value: VALOR_LICENCA,
+        value: valor,
         dueDate: vencimento,
-        description: "AvaliaReal — Licença anual (365 dias)",
+        description: `AvaliaReal — Plano ${data.plano} (365 dias)`,
         externalReference: context.userId,
       }),
     });
@@ -68,7 +72,8 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("licenca_pedidos").insert({
       user_id: context.userId,
       payment_id: cobranca.id,
-      valor: VALOR_LICENCA,
+      valor,
+      plano: data.plano,
       status: "pendente",
     });
     if (error) throw new Error(error.message);
@@ -90,7 +95,8 @@ export const criarCobrancaLicenca = createServerFn({ method: "POST" })
     return {
       paymentId: cobranca.id,
       url: cobranca.invoiceUrl ?? null,
-      valor: VALOR_LICENCA,
+      valor,
+      plano: data.plano,
       pixQrCode,
       pixCopiaECola,
     };

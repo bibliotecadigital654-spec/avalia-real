@@ -17,6 +17,7 @@ import { Route as AuthenticatedCarteiraRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedOfertasRouteImport } from './routes/_authenticated/ofertas'
 import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
 import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
+import { Route as ApiPublicAdgemPostbackRouteImport } from './routes/api/public/adgem-postback'
 import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
 import { Route as ApiPublicBitlabsWebhookRouteImport } from './routes/api/public/bitlabs-webhook'
 import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
@@ -61,6 +62,11 @@ const AuthenticatedTarefasIdRoute = AuthenticatedTarefasIdRouteImport.update({
   path: '/tarefas/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicAdgemPostbackRoute = ApiPublicAdgemPostbackRouteImport.update({
+  id: '/api/public/adgem-postback',
+  path: '/api/public/adgem-postback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAsaasWebhookRoute = ApiPublicAsaasWebhookRouteImport.update({
   id: '/api/public/asaas-webhook',
   path: '/api/public/asaas-webhook',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/_authenticated/carteira': typeof AuthenticatedCarteiraRoute
   '/_authenticated/ofertas': typeof AuthenticatedOfertasRoute
   '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
+  '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/carteira'
     | '/ofertas'
     | '/tarefas/$id'
+    | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/carteira'
     | '/ofertas'
     | '/tarefas/$id'
+    | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/_authenticated/carteira'
     | '/_authenticated/ofertas'
     | '/_authenticated/tarefas/$id'
+    | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
@@ -159,6 +171,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicAdgemPostbackRoute: typeof ApiPublicAdgemPostbackRoute
   ApiPublicAsaasWebhookRoute: typeof ApiPublicAsaasWebhookRoute
   ApiPublicBitlabsWebhookRoute: typeof ApiPublicBitlabsWebhookRoute
   ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
@@ -222,6 +235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTarefasIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/adgem-postback': {
+      id: '/api/public/adgem-postback'
+      path: '/api/public/adgem-postback'
+      fullPath: '/api/public/adgem-postback'
+      preLoaderRoute: typeof ApiPublicAdgemPostbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/asaas-webhook': {
       id: '/api/public/asaas-webhook'
       path: '/api/public/asaas-webhook'
@@ -269,6 +289,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicAdgemPostbackRoute: ApiPublicAdgemPostbackRoute,
   ApiPublicAsaasWebhookRoute: ApiPublicAsaasWebhookRoute,
   ApiPublicBitlabsWebhookRoute: ApiPublicBitlabsWebhookRoute,
   ApiPublicPostbackRoute: ApiPublicPostbackRoute,

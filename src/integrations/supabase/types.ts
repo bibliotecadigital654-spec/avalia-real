@@ -66,6 +66,7 @@ export type Database = {
           created_at: string
           id: string
           payment_id: string
+          plano: string
           status: string
           updated_at: string
           user_id: string
@@ -75,6 +76,7 @@ export type Database = {
           created_at?: string
           id?: string
           payment_id: string
+          plano?: string
           status?: string
           updated_at?: string
           user_id: string
@@ -84,6 +86,7 @@ export type Database = {
           created_at?: string
           id?: string
           payment_id?: string
+          plano?: string
           status?: string
           updated_at?: string
           user_id?: string
@@ -126,39 +129,77 @@ export type Database = {
       }
       profiles: {
         Row: {
+          cpf: string | null
           created_at: string
           data_assinatura: string | null
           id: string
           nome: string
           nome_completo: string
           pix_key: string | null
+          plano: string
           saldo: number
+          selfie_url: string | null
           status_licenca: string
+          termos_aceitos: boolean
           validade_licenca: string | null
         }
         Insert: {
+          cpf?: string | null
           created_at?: string
           data_assinatura?: string | null
           id: string
           nome?: string
           nome_completo?: string
           pix_key?: string | null
+          plano?: string
           saldo?: number
+          selfie_url?: string | null
           status_licenca?: string
+          termos_aceitos?: boolean
           validade_licenca?: string | null
         }
         Update: {
+          cpf?: string | null
           created_at?: string
           data_assinatura?: string | null
           id?: string
           nome?: string
           nome_completo?: string
           pix_key?: string | null
+          plano?: string
           saldo?: number
+          selfie_url?: string | null
           status_licenca?: string
+          termos_aceitos?: boolean
           validade_licenca?: string | null
         }
         Relationships: []
+      }
+      robo_execucoes: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "robo_execucoes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       submissions: {
         Row: {
@@ -373,14 +414,18 @@ export type Database = {
       aplicar_licenca_vitalicia: {
         Args: never
         Returns: {
+          cpf: string | null
           created_at: string
           data_assinatura: string | null
           id: string
           nome: string
           nome_completo: string
           pix_key: string | null
+          plano: string
           saldo: number
+          selfie_url: string | null
           status_licenca: string
+          termos_aceitos: boolean
           validade_licenca: string | null
         }
         SetofOptions: {
@@ -393,14 +438,18 @@ export type Database = {
       ativar_licenca: {
         Args: never
         Returns: {
+          cpf: string | null
           created_at: string
           data_assinatura: string | null
           id: string
           nome: string
           nome_completo: string
           pix_key: string | null
+          plano: string
           saldo: number
+          selfie_url: string | null
           status_licenca: string
+          termos_aceitos: boolean
           validade_licenca: string | null
         }
         SetofOptions: {
@@ -433,6 +482,14 @@ export type Database = {
         }[]
       }
       email_licenca_vitalicia: { Args: { _email: string }; Returns: boolean }
+      executar_robo_ia: {
+        Args: never
+        Returns: {
+          limite: number
+          permitido: boolean
+          usadas: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -440,6 +497,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      limite_plano: { Args: { _plano: string }; Returns: number }
       revisar_envio: {
         Args: { _aprovar: boolean; _submission_id: string }
         Returns: undefined
