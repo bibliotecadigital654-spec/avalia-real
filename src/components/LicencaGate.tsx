@@ -8,6 +8,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { criarCobrancaLicenca } from "@/lib/licenca.functions";
 
+function formatarValidade(valor: string | null | undefined) {
+  if (!valor) return null;
+  return new Date(valor).toLocaleDateString("pt-BR");
+}
+
 export function LicencaGate({ userId, children }: { userId?: string | undefined; children: ReactNode }) {
   const { licenca, carregando } = useLicenca(userId ?? null);
   const { user } = useAuth();
@@ -33,7 +38,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   }, [vitalicia, userId]);
 
   if (vitalicia) return <>{children}</>;
-  if (!userId || carregando) return <>{children}</>;
+  if (!userId || carregando || !licenca) return <>{children}</>;
   if (true) return <>{children}</>;
 
   async function gerarCobranca() {
@@ -55,7 +60,17 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
     }
   }
 
-  const expirada = licenca.status === "ativo" && !!licenca.validade;
+  function copiarCodigoPix(codigo: string) {
+    void navigator.clipboard.writeText(codigo);
+    toast.success("Código Pix copiado!");
+  }
+
+  const statusLicenca = licenca?.status ?? "inativo";
+  const validadeLicenca = licenca?.validade ?? undefined;
+  const expirada = statusLicenca === "ativo" && !!validadeLicenca;
+  const validadeAnterior = formatarValidade(validadeLicenca);
+  const pixQrCode = cobranca?.pixQrCode ?? undefined;
+  const pixCopiaECola = cobranca?.pixCopiaECola ?? undefined;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-background/95 backdrop-blur-sm">
@@ -72,31 +87,30 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
             acesso exclusivo às tarefas das marcas parceiras. Enquanto a licença não estiver ativa, o mural de tarefas
             fica bloqueado.
           </p>
-          {licenca.validade ? (
+          {validadeAnterior ? (
             <p className="mt-2 text-xs text-muted-foreground">
-              Validade anterior: {new Date(licenca.validade).toLocaleDateString("pt-BR")}
+              Validade anterior: {validadeAnterior}
             </p>
           ) : null}
 
           {cobranca ? (
             <div className="mt-5 flex flex-col items-center rounded-[16px] bg-background p-4 text-center ring-1 ring-border">
               <p className="text-xs font-semibold text-foreground/70">Pague com Pix</p>
-              {cobranca.pixQrCode ? (
+              {pixQrCode ? (
                 <img
-                  src={cobranca.pixQrCode}
+                  src={pixQrCode}
                   alt="QR Code Pix da licença anual do AvaliaReal"
                   className="mt-3 h-52 w-52 rounded-[12px] bg-card p-2 ring-1 ring-border"
                 />
               ) : null}
-              {cobranca.pixCopiaECola ? (
+              {pixCopiaECola ? (
                 <>
                   <p className="mt-4 w-full rounded-[12px] bg-card px-3 py-2.5 font-mono text-[11px] break-all ring-1 ring-border">
-                    {cobranca.pixCopiaECola}
+                    {pixCopiaECola}
                   </p>
                   <button
                     onClick={() => {
-                      void navigator.clipboard.writeText(cobranca.pixCopiaECola!);
-                      toast.success("Código Pix copiado!");
+                      if (pixCopiaECola) copiarCodigoPix(pixCopiaECola);
                     }}
                     className="mt-3 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98]"
                   >
