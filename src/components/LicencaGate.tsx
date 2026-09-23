@@ -40,7 +40,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   if (vitalicia) return <>{children}</>;
   if (!userId || carregando || !licenca) return <>{children}</>;
   if (true) return <>{children}</>;
-  if (licenca.ativa) return <>{children}</>;
+  if (licenca?.ativa) return <>{children}</>;
   async function gerarCobranca() {
     setGerando(true);
     try {
