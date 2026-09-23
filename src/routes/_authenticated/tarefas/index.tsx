@@ -13,11 +13,11 @@ export const Route = createFileRoute("/_authenticated/tarefas/")({
   head: () => ({
     meta: [
       { title: "Tarefas disponíveis | AvaliaReal" },
-      { name: "description", content: "Escolha tarefas digitais and acompanhe seus ganhos." },
+      { name: "description", content: "Escolha tarefas digitais e acompanhe seus ganhos." },
       { property: "og:title", content: "Tarefas disponíveis | AvaliaReal" },
       {
         property: "og:description",
-        content: "Escolha tarefas digitais and acompanhe seus ganhos.",
+        content: "Escolha tarefas digitais e acompanhe seus ganhos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -39,7 +39,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
   const buscarMural = useServerFn(obterMuralAdGem);
   const [rodando, setRodando] = useState(false);
   const [progresso, setProgresso] = useState(0);
-  const [muralUrl, setMuralUrl] = useState<string | null>(null);
+  const [exibirSucesso, setExibirSucesso] = useState(false);
   const [restantes, setRestantes] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -53,7 +53,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
     if (!userId || rodando) return;
     setRodando(true);
     setProgresso(0);
-    setMuralUrl(null);
+    setExibirSucesso(false);
 
     const inicio = Date.now();
     timer.current = setInterval(() => {
@@ -62,15 +62,17 @@ function RoboIA({ userId }: { userId: string | undefined }) {
     }, 100);
 
     try {
-      const [{ data, error }, mural] = await Promise.all([
+      const [{ data, error }] = await Promise.all([
         supabase.rpc("executar_robo_ia"),
         buscarMural().catch(() => null),
         new Promise((r) => setTimeout(r, 15000)),
       ]);
       if (error) throw error;
 
+      // Tratamento seguro de tipagem para o RPC do Supabase
       const resultado = Array.isArray(data) ? data[0] : data;
-      if (!resultado?.permitido) {
+      
+      if (!resultado || !resultado.permitido) {
         const limite = resultado?.limite ?? 0;
         toast.error(
           limite === 0
@@ -88,11 +90,9 @@ function RoboIA({ userId }: { userId: string | undefined }) {
           : `${Math.max(0, limite - (resultado.usadas ?? 0))} execuções restantes hoje`,
       );
 
-      if (mural?.configured && mural.url) {
-        setMuralUrl(mural.url);
-      } else {
-        toast.success("Robô finalizado com sucesso!");
-      }
+      setExibirSucesso(true);
+      toast.success("Robô finalizado com sucesso!");
+      
       await queryClient.invalidateQueries({ queryKey: ["conta"] });
       await queryClient.invalidateQueries({ queryKey: ["extrato"] });
     } catch (err) {
@@ -115,7 +115,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
         Robô IA de tarefas
       </h2>
       <p className="mt-1 text-xs text-muted-foreground">
-        O robô varre as redes parceiras and monta o seu mural com as melhores tarefas do dia.
+        O robô varre as redes parceiras e monta o seu mural com as melhores tarefas do dia.
       </p>
 
       {rodando ? (
@@ -140,7 +140,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
 
       {restantes ? <p className="mt-2 text-[11px] text-muted-foreground">{restantes}</p> : null}
 
-      {muralUrl ? (
+      {exibirSucesso ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 p-3 backdrop-blur-sm sm:items-center">
           <div className="w-full max-w-md rounded-[22px] bg-card p-4 ring-1 ring-border">
             <div className="flex items-center justify-between px-2 pb-3">
@@ -148,7 +148,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
                 Auditoria do Sistema
               </p>
               <button
-                onClick={() => setMuralUrl(null)}
+                onClick={() => setExibirSucesso(false)}
                 aria-label="Fechar"
                 className="rounded-full px-2 py-1 text-sm text-muted-foreground hover:bg-muted"
               >
@@ -156,12 +156,12 @@ function RoboIA({ userId }: { userId: string | undefined }) {
               </button>
             </div>
             
-            {/* NOVO POP-UP PREMIUM: ESTILO PROFITIFY COMPLETO */}
+            {/* POP-UP PREMIUM MODELO PROFITIFY */}
             <div className="bg-gradient-to-b from-purple-950/40 via-purple-900/20 to-black/40 p-6 rounded-[16px] text-center my-2 border border-purple-500/20 shadow-2xl animate-in fade-in zoom-in duration-300">
               <div className="text-5xl mb-3 animate-bounce">✅</div>
               <h3 className="text-base font-bold text-white mb-1">Missão Concluída com Sucesso!</h3>
               <p className="text-xs text-purple-200/70 mb-4 max-w-[240px] mx-auto">
-                Servidor EUA finalizou a verificação de dados and injetou os créditos em sua conta.
+                Servidor EUA finalizou a verificação de dados e injetou os créditos em sua conta.
               </p>
               <div className="inline-block bg-black/40 px-5 py-2 rounded-full border border-green-500/30">
                 <span className="text-2xl font-black text-green-400 font-mono tracking-tight">
@@ -254,4 +254,3 @@ function TarefasPage() {
                   </p>
                 </div>
                 <div className="shrink-0 rounded-[10px] bg-coin/20 px-2.5 py-1.5 text-right ring-1 ring-coin/40">
-
