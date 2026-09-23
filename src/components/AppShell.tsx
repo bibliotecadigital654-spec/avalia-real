@@ -123,6 +123,5 @@ export function AppShell({
           </div>
         </nav>
       </div>
-    </LicencaGate>
   );
 }
