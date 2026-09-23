@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { brl } from "@/lib/format";
 import { mensagemAuth } from "@/lib/erros-auth";
+import { cpfValido, mascararCpf } from "@/lib/cpf";
+import { CameraCapture } from "@/components/CameraCapture";
+import { RodapeInstitucional } from "@/components/RodapeInstitucional";
+import { registrarVerificacao } from "@/lib/kyc.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -85,6 +90,7 @@ function Index() {
   const { session, user, carregando } = useAuth();
   const navigate = useNavigate();
   const saldo = useSaldoTempoReal(user?.id ?? null);
+  const enviarVerificacao = useServerFn(registrarVerificacao);
 
   const [modo, setModo] = useState<"criar" | "entrar" | null>(null);
   const [erro, setErro] = useState<string | null>(null);
@@ -92,6 +98,9 @@ function Index() {
   const [nomeCompleto, setNomeCompleto] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [selfie, setSelfie] = useState<string | null>(null);
+  const [termos, setTermos] = useState(false);
   const [pix, setPix] = useState("");
   const [enviando, setEnviando] = useState(false);
 
@@ -103,6 +112,15 @@ function Index() {
     setErro(msg);
     toast.error(msg);
   }
+
+  const cpfOk = cpfValido(cpf);
+  const cadastroLiberado =
+    nomeCompleto.trim().length >= 3 &&
+    email.trim().length > 3 &&
+    senha.length >= 6 &&
+    cpfOk &&
+    !!selfie &&
+    termos;
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
@@ -121,6 +139,19 @@ function Index() {
           falhar(parsed.error.issues[0]?.message ?? "Confira os dados");
           return;
         }
+        if (!cpfOk) {
+          falhar("Informe um CPF válido");
+          return;
+        }
+        if (!selfie) {
+          falhar("Tire a selfie segurando o seu documento com foto");
+          return;
+        }
+        if (!termos) {
+          falhar("É preciso aceitar os Termos de Serviço e a Política de Privacidade");
+          return;
+        }
+
         const { data, error } = await supabase.auth.signUp({
           email: parsed.data.email,
           password: parsed.data.senha,
@@ -135,6 +166,22 @@ function Index() {
         });
         if (error) throw error;
         setSenha("");
+
+        const novoId = data.user?.id;
+        if (novoId) {
+          try {
+            await enviarVerificacao({
+              data: { userId: novoId, cpf, selfie, termos: true },
+            });
+          } catch (err) {
+            toast.error(
+              err instanceof Error
+                ? `Conta criada, mas a verificação falhou: ${err.message}`
+                : "Conta criada, mas a verificação falhou.",
+            );
+          }
+        }
+
         if (!data.session) {
           setSucesso(
             `Conta criada para ${parsed.data.email}! Enviamos um e-mail de confirmação — clique no link para entrar.`,
@@ -142,7 +189,7 @@ function Index() {
           toast.success("Conta criada! Confirme seu e-mail.");
           return;
         }
-        setSucesso("Conta criada com sucesso! Você já está conectado.");
+        setSucesso("Conta criada e verificada! Você já está conectado.");
         toast.success("Conta criada!");
       } else {
         const parsed = loginSchema.safeParse({ email, senha });
@@ -174,7 +221,7 @@ function Index() {
         <div className="absolute top-52 -right-12 h-72 w-72 rounded-full bg-accent/25 blur-3xl" />
       </div>
 
-      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-12">
+      <main className="relative z-10 mx-auto flex w-full max-w-md flex-col justify-center px-5 py-12">
         <div className="flex items-center gap-2.5">
           <div className="grid size-9 place-items-center rounded-[10px] bg-gradient-brand text-primary-foreground shadow-brand">
             <span className="font-display text-sm font-semibold tracking-tight">AR</span>
@@ -241,9 +288,11 @@ function Index() {
         </div>
       </main>
 
+      <RodapeInstitucional />
+
       {modo ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-4 backdrop-blur-sm sm:items-center">
-          <div className="w-full max-w-md rounded-[24px] bg-card p-5 ring-1 ring-border">
+          <div className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-[24px] bg-card p-5 ring-1 ring-border">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="font-display text-xl font-semibold tracking-tight">
@@ -251,7 +300,7 @@ function Index() {
                 </h2>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {modo === "criar"
-                    ? "Leva menos de um minuto."
+                    ? "Cadastro verificado: CPF e selfie com documento."
                     : "Use o e-mail e a senha do seu cadastro."}
                 </p>
               </div>
@@ -323,6 +372,24 @@ function Index() {
                 />
               </div>
 
+              {modo === "criar" ? (
+                <div>
+                  <label className="text-xs font-semibold text-foreground/70">CPF</label>
+                  <input
+                    value={cpf}
+                    onChange={(e) => setCpf(mascararCpf(e.target.value))}
+                    inputMode="numeric"
+                    placeholder="000.000.000-00"
+                    className={campo}
+                  />
+                  {cpf.length > 0 && !cpfOk ? (
+                    <p className="mt-1 text-[11px] font-medium text-destructive">
+                      CPF inválido — confira os números.
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+
               <div>
                 <label className="text-xs font-semibold text-foreground/70">Senha</label>
                 <input
@@ -336,23 +403,44 @@ function Index() {
               </div>
 
               {modo === "criar" ? (
-                <div>
-                  <label className="text-xs font-semibold text-foreground/70">
-                    Chave Pix (opcional)
-                  </label>
-                  <input
-                    value={pix}
-                    onChange={(e) => setPix(e.target.value)}
-                    maxLength={140}
-                    placeholder="e-mail, CPF ou telefone"
-                    className={campo}
+                <>
+                  <CameraCapture
+                    rotulo="Selfie segurando um documento com foto"
+                    ajuda="Segure o RG ou a CNH ao lado do rosto. A foto é usada só para verificação antifraude."
+                    textoBotao="Capturar selfie"
+                    onCapturar={(foto) => setSelfie(foto)}
                   />
-                </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-foreground/70">
+                      Chave Pix (opcional)
+                    </label>
+                    <input
+                      value={pix}
+                      onChange={(e) => setPix(e.target.value)}
+                      maxLength={140}
+                      placeholder="e-mail, CPF ou telefone"
+                      className={campo}
+                    />
+                  </div>
+
+                  <label className="flex items-start gap-2.5 rounded-[12px] bg-background p-3 ring-1 ring-border">
+                    <input
+                      type="checkbox"
+                      checked={termos}
+                      onChange={(e) => setTermos(e.target.checked)}
+                      className="mt-0.5 size-4 accent-current"
+                    />
+                    <span className="text-[11px] leading-4 text-muted-foreground">
+                      Li e aceito os Termos de Serviço e Política de Privacidade.
+                    </span>
+                  </label>
+                </>
               ) : null}
 
               <button
                 type="submit"
-                disabled={enviando}
+                disabled={enviando || (modo === "criar" && !cadastroLiberado)}
                 className="w-full rounded-full bg-gradient-brand py-3.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98] disabled:opacity-60"
               >
                 {enviando ? "Aguarde…" : modo === "criar" ? "Criar conta" : "Entrar"}
