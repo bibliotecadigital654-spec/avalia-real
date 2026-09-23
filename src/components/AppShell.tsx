@@ -3,7 +3,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useConta } from "@/hooks/useConta";
-import { LicencaGate } from "@/components/LicencaGate";
 
 type NavItem = { to: string; label: string; glyph: string };
 
@@ -46,8 +45,7 @@ export function AppShell({
   }
 
   return (
-    <LicencaGate userId={conta?.userId}>
-      <div className="min-h-screen bg-background pb-28 text-foreground">
+    <div className="min-h-screen bg-background pb-28 text-foreground">
         <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
           <div className="absolute -top-24 -left-16 h-72 w-72 rounded-full bg-brand-light/40 blur-3xl" />
           <div className="absolute top-32 -right-12 h-64 w-64 rounded-full bg-accent/25 blur-3xl" />
@@ -125,6 +123,5 @@ export function AppShell({
           </div>
         </nav>
       </div>
-    </LicencaGate>
   );
 }
