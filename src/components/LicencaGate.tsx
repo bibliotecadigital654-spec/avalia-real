@@ -33,8 +33,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   }, [vitalicia, userId]);
 
   if (vitalicia) return <>{children}</>;
-  const licencaAtual = licenca;
-  if (!userId || carregando || !licencaAtual) return <>{children}</>;
+  if (!userId || carregando || !licenca) return <>{children}</>;
   if (true) return <>{children}</>;
 
   async function gerarCobranca() {
@@ -61,8 +60,10 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
     toast.success("Código Pix copiado!");
   }
 
-  const expirada = licencaAtual.status === "ativo" && !!licencaAtual.validade;
-  const validadeLicenca = licencaAtual.validade;
+  const expirada = licenca?.status === "ativo" && !!licenca.validade;
+  const validadeAnterior = licenca?.validade
+    ? new Date(licenca.validade).toLocaleDateString("pt-BR")
+    : null;
   const pixQrCode = cobranca?.pixQrCode ?? undefined;
   const pixCopiaECola = cobranca?.pixCopiaECola ?? undefined;
 
@@ -81,9 +82,9 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
             acesso exclusivo às tarefas das marcas parceiras. Enquanto a licença não estiver ativa, o mural de tarefas
             fica bloqueado.
           </p>
-          {validadeLicenca ? (
+          {validadeAnterior ? (
             <p className="mt-2 text-xs text-muted-foreground">
-              Validade anterior: {new Date(validadeLicenca).toLocaleDateString("pt-BR")}
+              Validade anterior: {validadeAnterior}
             </p>
           ) : null}
 
@@ -103,7 +104,9 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
                     {pixCopiaECola}
                   </p>
                   <button
-                    onClick={() => copiarCodigoPix(pixCopiaECola)}
+                    onClick={() => {
+                      if (pixCopiaECola) copiarCodigoPix(pixCopiaECola);
+                    }}
                     className="mt-3 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98]"
                   >
                     Copiar Código Pix
