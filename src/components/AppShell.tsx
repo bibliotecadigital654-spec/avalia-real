@@ -34,6 +34,7 @@ export function AppShell({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [institucional, setInstitucional] = useState(false);
 
   async function sair() {
     await queryClient.cancelQueries();
