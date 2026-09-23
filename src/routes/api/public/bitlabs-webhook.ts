@@ -41,7 +41,7 @@ async function lerParametros(request: Request) {
   }
 
   return {
-    uid: valores["uid"],
+    uid: valores["uid"] ?? valores["subid"] ?? valores["user_id"],
     val: valores["val"],
     tx:
       valores["tx"] ??

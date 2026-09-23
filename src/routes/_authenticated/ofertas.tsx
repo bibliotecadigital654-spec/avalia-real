@@ -43,7 +43,7 @@ function OfertasPage() {
           Pesquisas digitais disponíveis para o seu perfil.
         </p>
 
-        <div className="mt-4">
+        <div className="mx-auto mt-4 w-full">
           {isLoading ? (
             <div className="grid min-h-80 place-items-center rounded-lg bg-card ring-1 ring-border">
               <p className="text-sm text-muted-foreground">Carregando pesquisas…</p>
@@ -58,7 +58,7 @@ function OfertasPage() {
             <iframe
               src={data.url}
               title="Mural de pesquisas BitLabs"
-              className="h-[68vh] min-h-[560px] w-full rounded-lg bg-card ring-1 ring-border"
+              className="mx-auto block h-[68vh] min-h-[560px] w-full rounded-lg bg-card ring-1 ring-border"
               allow="clipboard-write"
             />
           ) : null}
