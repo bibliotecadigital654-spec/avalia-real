@@ -176,11 +176,8 @@ function RoboIA({ userId }: { userId: string | undefined }) {
           : `${Math.max(0, limite - (resultado.usadas ?? 0))} execuções restantes hoje`,
       );
 
-      if (mural?.configured && mural.url) {
-        setMuralUrl(mural.url);
-      } else {
-        toast.success("Robô finalizado! Abra o mural de ofertas para ver as tarefas.");
-      }
+      void mural;
+      setMuralUrl("painel");
       await queryClient.invalidateQueries({ queryKey: ["conta"] });
       await queryClient.invalidateQueries({ queryKey: ["extrato"] });
     } catch (err) {
