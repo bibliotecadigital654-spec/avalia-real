@@ -68,53 +68,27 @@ const CONTEUDO: Record<ModalId, { titulo: string; corpo: ReactNode }> = {
   },
 };
 
-export function RodapeInstitucional() {
-  const [aberto, setAberto] = useState<ModalId | null>(null);
-  const modal = aberto ? CONTEUDO[aberto] : null;
+export function PainelInstitucional({
+  aberto,
+  onFechar,
+}: {
+  aberto: boolean;
+  onFechar: () => void;
+}) {
+  const [modalId, setModalId] = useState<ModalId | null>(null);
+  const modal = modalId ? CONTEUDO[modalId] : null;
+
+  if (!aberto) return null;
 
   return (
-    <footer className="relative z-10 mt-12 border-t border-border bg-card px-5 py-10 text-foreground">
-      <div className="mx-auto w-full max-w-4xl">
-        <p className="font-display text-sm font-semibold tracking-tight">AvaliaReal</p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Microtarefas digitais pagas em reais, com verificação de identidade e regras claras.
-        </p>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
-          {(Object.keys(CONTEUDO) as ModalId[]).map((id) => (
-            <button
-              key={id}
-              onClick={() => setAberto(id)}
-              className="rounded-lg bg-background px-4 py-4 text-left ring-1 ring-border transition-transform active:scale-[.99]"
-            >
-              <p className="text-sm font-semibold">{CONTEUDO[id].titulo}</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">Abrir informações</p>
-            </button>
-          ))}
-        </div>
-
-        <a
-          href="https://wa.me/573151495373?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20AvaliaReal."
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 block rounded-lg bg-background px-4 py-3 text-center text-[12px] font-semibold text-brand ring-1 ring-border"
-        >
-          Falar com o Suporte Técnico no WhatsApp
-        </a>
-
-        <p className="mt-6 text-center text-[11px] text-muted-foreground">
-          © 2026 AvaliaReal. Todos os direitos reservados.
-        </p>
-      </div>
-
-
-      {modal ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 p-4 backdrop-blur-sm sm:items-center">
-          <div className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-[24px] bg-card p-5 text-foreground ring-1 ring-border">
+    <div className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/50 p-4 backdrop-blur-sm sm:items-center">
+      <div className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-[24px] bg-card p-5 text-foreground ring-1 ring-border">
+        {modal ? (
+          <>
             <div className="flex items-start justify-between gap-3">
               <h2 className="font-display text-lg font-semibold tracking-tight">{modal.titulo}</h2>
               <button
-                onClick={() => setAberto(null)}
+                onClick={() => setModalId(null)}
                 aria-label="Fechar"
                 className="rounded-full px-2 py-1 text-sm text-muted-foreground"
               >
@@ -125,14 +99,50 @@ export function RodapeInstitucional() {
               {modal.corpo}
             </div>
             <button
-              onClick={() => setAberto(null)}
+              onClick={() => setModalId(null)}
               className="mt-5 w-full rounded-full bg-gradient-brand py-3 text-sm font-semibold text-primary-foreground shadow-brand"
             >
-              Fechar
+              Voltar
             </button>
-          </div>
-        </div>
-      ) : null}
-    </footer>
+          </>
+        ) : (
+          <>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="font-display text-lg font-semibold tracking-tight">AvaliaReal</h2>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Microtarefas digitais pagas em reais, com verificação de identidade e regras
+                  claras.
+                </p>
+              </div>
+              <button
+                onClick={onFechar}
+                aria-label="Fechar"
+                className="rounded-full px-2 py-1 text-sm text-muted-foreground"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-5 grid gap-3">
+              {(Object.keys(CONTEUDO) as ModalId[]).map((id) => (
+                <button
+                  key={id}
+                  onClick={() => setModalId(id)}
+                  className="rounded-lg bg-background px-4 py-4 text-left ring-1 ring-border transition-transform active:scale-[.99]"
+                >
+                  <p className="text-sm font-semibold">{CONTEUDO[id].titulo}</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Abrir informações</p>
+                </button>
+              ))}
+            </div>
+
+            <p className="mt-5 text-center text-[11px] text-muted-foreground">
+              © 2026 AvaliaReal. Todos os direitos reservados.
+            </p>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
