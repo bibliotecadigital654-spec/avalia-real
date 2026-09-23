@@ -216,14 +216,9 @@ function Index() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -top-24 -left-16 h-72 w-72 rounded-full bg-brand-light/40 blur-3xl" />
-        <div className="absolute top-52 -right-12 h-72 w-72 rounded-full bg-accent/25 blur-3xl" />
-      </div>
-
       <main className="relative z-10 mx-auto flex w-full max-w-md flex-col justify-center px-5 py-12">
         <div className="flex items-center gap-2.5">
-          <div className="grid size-9 place-items-center rounded-[10px] bg-gradient-brand text-primary-foreground shadow-brand">
+          <div className="grid size-9 place-items-center rounded-lg bg-gradient-brand text-primary-foreground shadow-brand">
             <span className="font-display text-sm font-semibold tracking-tight">AR</span>
           </div>
           <p className="font-display text-base font-semibold tracking-tight">AvaliaReal</p>
@@ -232,23 +227,22 @@ function Index() {
         <h1 className="mt-8 font-display text-4xl leading-tight font-semibold tracking-tight text-pretty">
           Avalie empresas. Receba em reais.
         </h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          Escolha uma pesquisa ou oferta disponível, responda às perguntas das marcas parceiras e
-          veja o saldo acumular direto na sua carteira virtual.
+        <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
+          Interface integrada para processamento e auditoria de dados globais.
         </p>
 
-        <div className="mt-7 rounded-[22px] bg-gradient-safe p-5 text-primary-foreground shadow-safe">
-          <p className="text-xs font-medium tracking-[0.18em] text-primary-foreground/60 uppercase">
+        <div className="mt-7 rounded-xl bg-card p-5 ring-1 ring-border shadow-safe">
+          <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
             Saldo acumulado
           </p>
-          <p className="balance-pop mt-2 font-display text-5xl leading-none font-semibold tracking-tight">
+          <p className="balance-pop mt-2 font-display text-5xl leading-none font-semibold tracking-tight text-safe">
             {logado ? brl(saldo ?? 0) : "R$ 1.248,00"}
           </p>
-          <p className="mt-1 text-xs text-primary-foreground/60">
-            {logado
-              ? "Seu saldo atualiza sozinho a cada recompensa confirmada"
-              : "Exemplo do que dá para juntar avaliando no dia a dia"}
-          </p>
+          {logado ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Seu saldo atualiza sozinho a cada recompensa confirmada
+            </p>
+          ) : null}
         </div>
 
         <div className="mt-7 space-y-3">
