@@ -8,6 +8,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { criarCobrancaLicenca } from "@/lib/licenca.functions";
 
+function formatarValidade(valor: string | null | undefined) {
+  if (!valor) return null;
+  return new Date(valor).toLocaleDateString("pt-BR");
+}
+
 export function LicencaGate({ userId, children }: { userId?: string | undefined; children: ReactNode }) {
   const { licenca, carregando } = useLicenca(userId ?? null);
   const { user } = useAuth();
@@ -63,9 +68,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   const statusLicenca = licenca?.status ?? "inativo";
   const validadeLicenca = licenca?.validade ?? undefined;
   const expirada = statusLicenca === "ativo" && !!validadeLicenca;
-  const validadeAnterior = validadeLicenca
-    ? new Date(validadeLicenca).toLocaleDateString("pt-BR")
-    : null;
+  const validadeAnterior = formatarValidade(validadeLicenca);
   const pixQrCode = cobranca?.pixQrCode ?? undefined;
   const pixCopiaECola = cobranca?.pixCopiaECola ?? undefined;
 
