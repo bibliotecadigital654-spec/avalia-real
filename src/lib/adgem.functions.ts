@@ -6,7 +6,6 @@ const URL_PADRAO = "https://adunits.adgem.com/wall?appid=33643&playerid=";
 export const obterMuralAdGem = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const base = (process.env["MURAL_ADGEM_URL"] ?? URL_PADRAO).trim() || URL_PADRAO;
     const appId = (process.env["ADGEM_APP_ID"] ?? "").trim();
 
     let url: URL;
