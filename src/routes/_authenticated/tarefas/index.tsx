@@ -264,11 +264,12 @@ function TarefasPage() {
           <div className="mb-4 flex items-center justify-between rounded-lg bg-brand/10 px-3 py-2 ring-1 ring-brand/30">
             <span className="text-xs text-muted-foreground">Seu plano</span>
             <span className="text-sm font-semibold text-brand">
-              {!conta
-                ? "…"
-                : conta.plano === "nenhum"
-                  ? "Nenhum plano ativo"
-                  : `Plano ${conta.plano.charAt(0).toUpperCase()}${conta.plano.slice(1)}${conta.isAdmin ? " · Vitalício" : ""}`}
+              {(() => {
+                if (!conta) return "…";
+                const plano = conta.plano ?? "nenhum";
+                if (plano === "nenhum") return "Nenhum plano ativo";
+                return `Plano ${plano.charAt(0).toUpperCase()}${plano.slice(1)}${conta.isAdmin ? " · Vitalício" : ""}`;
+              })()}
             </span>
           </div>
           <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
