@@ -283,7 +283,15 @@ function Index() {
         </div>
       </main>
 
-      <RodapeInstitucional />
+      <button
+        onClick={() => setInstitucional(true)}
+        className="relative z-10 mx-auto mb-8 block w-full max-w-md px-5 text-center text-xs font-semibold text-muted-foreground"
+      >
+        Quem Somos · Sobre o Desenvolvedor · Termos de Uso
+      </button>
+
+      <PainelInstitucional aberto={institucional} onFechar={() => setInstitucional(false)} />
+
 
       {modo ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-4 backdrop-blur-sm sm:items-center">
