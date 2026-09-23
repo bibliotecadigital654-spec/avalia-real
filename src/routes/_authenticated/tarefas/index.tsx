@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { useConta } from "@/hooks/useConta";
 import { brl } from "@/lib/format";
-import { obterMuralAdGem } from "@/lib/adgem.functions";
 
 export const Route = createFileRoute("/_authenticated/tarefas/")({
   head: () => ({
@@ -36,7 +34,6 @@ const ETAPAS_ROBO = [
 
 function RoboIA({ userId }: { userId: string | undefined }) {
   const queryClient = useQueryClient();
-  const buscarMural = useServerFn(obterMuralAdGem);
   const [rodando, setRodando] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [exibirSucesso, setExibirSucesso] = useState(false);
@@ -62,14 +59,11 @@ function RoboIA({ userId }: { userId: string | undefined }) {
     }, 100);
 
     try {
-      const [{ data, error }] = await Promise.all([
-        supabase.rpc("executar_robo_ia"),
-        buscarMural().catch(() => null),
-        new Promise((r) => setTimeout(r, 15000)),
-      ]);
+      const { data, error } = await supabase.rpc("executar_robo_ia");
       if (error) throw error;
 
-      // Desativação estrita do validador TypeScript rígido para evitar falha de build
+      await new Promise((r) => setTimeout(r, 15000));
+
       const respostaBruta = data as any;
       const resultado = Array.isArray(respostaBruta) ? respostaBruta[0] : respostaBruta;
       
@@ -157,7 +151,6 @@ function RoboIA({ userId }: { userId: string | undefined }) {
               </button>
             </div>
             
-            {/* INTERFACE DE SUCESSO PREMIUM EM SUBSTITUIÇÃO AO IFRAME VISÍVEL */}
             <div className="bg-gradient-to-b from-purple-950/40 via-purple-900/20 to-black/40 p-6 rounded-[16px] text-center my-2 border border-purple-500/20 shadow-2xl animate-in fade-in zoom-in duration-300">
               <div className="text-5xl mb-3 animate-bounce">✅</div>
               <h3 className="text-base font-bold text-white mb-1">Missão Concluída com Sucesso!</h3>
@@ -251,3 +244,12 @@ function TarefasPage() {
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-pretty">{t.titulo}</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
+                    {t.empresa} · {t.local}
+                  </p>
+                </div>
+                <div className="shrink-0 rounded-[10px] bg-coin/20 px-2.5 py-1.5 text-right ring-1 ring-coin/40">
+                  <p className="font-display text-base leading-none font-semibold">
+                    {brl(Number(t.valor))}
+                  </p>
+                </div>
+              </div>
