@@ -39,8 +39,8 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
 
   if (vitalicia) return <>{children}</>;
   if (!userId || carregando || !licenca) return <>{children}</>;
-  if (true) return <>{children}</>;
-
+  if (true) return <>{children}</>; // Esta linha abre o acesso para qualquer usuário
+  if (licenca.ativa) return <>{children}</>;
   async function gerarCobranca() {
     setGerando(true);
     try {
@@ -88,9 +88,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
             fica bloqueado.
           </p>
           {validadeAnterior ? (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Validade anterior: {validadeAnterior}
-            </p>
+            <p className="mt-2 text-xs text-muted-foreground">Validade anterior: {validadeAnterior}</p>
           ) : null}
 
           {cobranca ? (
