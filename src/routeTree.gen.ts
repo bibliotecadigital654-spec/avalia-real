@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCarteiraRouteImport } from './routes/_authenticated/carteira'
 import { Route as AuthenticatedOfertasRouteImport } from './routes/_authenticated/ofertas'
+import { Route as AuthenticatedSuporteRouteImport } from './routes/_authenticated/suporte'
 import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
 import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
 import { Route as ApiPublicAdgemPostbackRouteImport } from './routes/api/public/adgem-postback'
@@ -49,6 +50,11 @@ const AuthenticatedCarteiraRoute = AuthenticatedCarteiraRouteImport.update({
 const AuthenticatedOfertasRoute = AuthenticatedOfertasRouteImport.update({
   id: '/ofertas',
   path: '/ofertas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSuporteRoute = AuthenticatedSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTarefasIndexRoute =
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
+  '/suporte': typeof AuthenticatedSuporteRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
+  '/suporte': typeof AuthenticatedSuporteRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/carteira': typeof AuthenticatedCarteiraRoute
   '/_authenticated/ofertas': typeof AuthenticatedOfertasRoute
+  '/_authenticated/suporte': typeof AuthenticatedSuporteRoute
   '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/carteira'
     | '/ofertas'
+    | '/suporte'
     | '/tarefas/$id'
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/carteira'
     | '/ofertas'
+    | '/suporte'
     | '/tarefas/$id'
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/carteira'
     | '/_authenticated/ofertas'
+    | '/_authenticated/suporte'
     | '/_authenticated/tarefas/$id'
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
@@ -221,6 +233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOfertasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/suporte': {
+      id: '/_authenticated/suporte'
+      path: '/suporte'
+      fullPath: '/suporte'
+      preLoaderRoute: typeof AuthenticatedSuporteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/tarefas/': {
       id: '/_authenticated/tarefas/'
       path: '/tarefas'
@@ -270,6 +289,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCarteiraRoute: typeof AuthenticatedCarteiraRoute
   AuthenticatedOfertasRoute: typeof AuthenticatedOfertasRoute
+  AuthenticatedSuporteRoute: typeof AuthenticatedSuporteRoute
   AuthenticatedTarefasIdRoute: typeof AuthenticatedTarefasIdRoute
   AuthenticatedTarefasIndexRoute: typeof AuthenticatedTarefasIndexRoute
 }
@@ -278,6 +298,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCarteiraRoute: AuthenticatedCarteiraRoute,
   AuthenticatedOfertasRoute: AuthenticatedOfertasRoute,
+  AuthenticatedSuporteRoute: AuthenticatedSuporteRoute,
   AuthenticatedTarefasIdRoute: AuthenticatedTarefasIdRoute,
   AuthenticatedTarefasIndexRoute: AuthenticatedTarefasIndexRoute,
 }
