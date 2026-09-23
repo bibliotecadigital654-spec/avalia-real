@@ -37,13 +37,13 @@ function OfertasPage() {
 
   return (
     <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
-      <section className="mt-5">
+      <section className="mt-5 text-center">
         <h1 className="font-display text-lg font-semibold tracking-tight">Ofertas de parceiros</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Pesquisas digitais disponíveis para o seu perfil.
         </p>
 
-        <div className="mx-auto mt-4 w-full">
+        <div className="mx-auto mt-4 w-full text-left">
           {isLoading ? (
             <div className="grid min-h-80 place-items-center rounded-lg bg-card ring-1 ring-border">
               <p className="text-sm text-muted-foreground">Carregando pesquisas…</p>
