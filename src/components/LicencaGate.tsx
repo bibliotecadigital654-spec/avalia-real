@@ -33,7 +33,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   }, [vitalicia, userId]);
 
   if (vitalicia) return <>{children}</>;
-  if (!userId || carregando) return <>{children}</>;
+  if (!userId || carregando || !licenca) return <>{children}</>;
   if (true) return <>{children}</>;
 
   async function gerarCobranca() {
@@ -56,6 +56,8 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
   }
 
   const expirada = licenca.status === "ativo" && !!licenca.validade;
+  const pixQrCode = cobranca?.pixQrCode ?? null;
+  const pixCopiaECola = cobranca?.pixCopiaECola ?? null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-background/95 backdrop-blur-sm">
@@ -81,21 +83,21 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
           {cobranca ? (
             <div className="mt-5 flex flex-col items-center rounded-[16px] bg-background p-4 text-center ring-1 ring-border">
               <p className="text-xs font-semibold text-foreground/70">Pague com Pix</p>
-              {cobranca.pixQrCode ? (
+              {pixQrCode ? (
                 <img
-                  src={cobranca.pixQrCode}
+                  src={pixQrCode}
                   alt="QR Code Pix da licença anual do AvaliaReal"
                   className="mt-3 h-52 w-52 rounded-[12px] bg-card p-2 ring-1 ring-border"
                 />
               ) : null}
-              {cobranca.pixCopiaECola ? (
+              {pixCopiaECola ? (
                 <>
                   <p className="mt-4 w-full rounded-[12px] bg-card px-3 py-2.5 font-mono text-[11px] break-all ring-1 ring-border">
-                    {cobranca.pixCopiaECola}
+                    {pixCopiaECola}
                   </p>
                   <button
                     onClick={() => {
-                      void navigator.clipboard.writeText(cobranca.pixCopiaECola!);
+                      void navigator.clipboard.writeText(pixCopiaECola);
                       toast.success("Código Pix copiado!");
                     }}
                     className="mt-3 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98]"
