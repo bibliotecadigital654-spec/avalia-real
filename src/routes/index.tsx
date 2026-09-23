@@ -93,6 +93,7 @@ function Index() {
   const enviarVerificacao = useServerFn(registrarVerificacao);
 
   const [modo, setModo] = useState<"criar" | "entrar" | null>(null);
+  const [institucional, setInstitucional] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState<string | null>(null);
   const [nomeCompleto, setNomeCompleto] = useState("");
