@@ -60,9 +60,11 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
     toast.success("Código Pix copiado!");
   }
 
-  const expirada = licenca?.status === "ativo" && !!licenca.validade;
-  const validadeAnterior = licenca?.validade
-    ? new Date(licenca.validade).toLocaleDateString("pt-BR")
+  const statusLicenca = licenca?.status ?? "inativo";
+  const validadeLicenca = licenca?.validade ?? undefined;
+  const expirada = statusLicenca === "ativo" && !!validadeLicenca;
+  const validadeAnterior = validadeLicenca
+    ? new Date(validadeLicenca).toLocaleDateString("pt-BR")
     : null;
   const pixQrCode = cobranca?.pixQrCode ?? undefined;
   const pixCopiaECola = cobranca?.pixCopiaECola ?? undefined;
