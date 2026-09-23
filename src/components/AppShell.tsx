@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { PainelInstitucional } from "@/components/RodapeInstitucional";
 
 type NavItem = { to: string; label: string; glyph: string };
 
@@ -33,6 +34,7 @@ export function AppShell({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [institucional, setInstitucional] = useState(false);
 
   async function sair() {
     await queryClient.cancelQueries();
@@ -112,8 +114,17 @@ export function AppShell({
                 <span className="text-[10px] font-medium">{item.label}</span>
               </Link>
             ))}
+            <button
+              onClick={() => setInstitucional(true)}
+              className="flex flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-muted-foreground transition-transform active:scale-95"
+            >
+              <span className="font-display text-sm leading-none font-semibold">ℹ</span>
+              <span className="text-[10px] font-medium">Institucional</span>
+            </button>
           </div>
         </nav>
+
+        <PainelInstitucional aberto={institucional} onFechar={() => setInstitucional(false)} />
       </div>
   );
 }
