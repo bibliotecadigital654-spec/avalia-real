@@ -61,11 +61,11 @@
   --coin: oklch(0.82 0.15 88);
   --mint: oklch(0.72 0.17 155);
   --safe: oklch(0.72 0.17 155);
-  --ink: oklch(0.985 0 0);
+  --ink: oklch(0.08 0.003 285);
   --paper: oklch(0 0 0);
 
   --background: var(--paper);
-  --foreground: var(--ink);
+  --foreground: oklch(0.985 0 0);
   --card: oklch(0.145 0.004 285);
   --card-foreground: var(--ink);
   --popover: oklch(0.145 0.004 285);

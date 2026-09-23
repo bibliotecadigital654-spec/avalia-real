@@ -73,10 +73,10 @@ export function RodapeInstitucional() {
   const modal = aberto ? CONTEUDO[aberto] : null;
 
   return (
-    <footer className="relative z-10 mt-12 bg-ink/95 px-5 py-10 text-primary-foreground">
+    <footer className="relative z-10 mt-12 border-t border-border bg-card px-5 py-10 text-foreground">
       <div className="mx-auto w-full max-w-4xl">
         <p className="font-display text-sm font-semibold tracking-tight">AvaliaReal</p>
-        <p className="mt-1 text-xs text-primary-foreground/60">
+        <p className="mt-1 text-xs text-muted-foreground">
           Microtarefas digitais pagas em reais, com verificação de identidade e regras claras.
         </p>
 
@@ -85,10 +85,10 @@ export function RodapeInstitucional() {
             <button
               key={id}
               onClick={() => setAberto(id)}
-              className="rounded-[16px] bg-primary-foreground/10 px-4 py-4 text-left ring-1 ring-primary-foreground/15 transition-transform active:scale-[.99]"
+              className="rounded-lg bg-background px-4 py-4 text-left ring-1 ring-border transition-transform active:scale-[.99]"
             >
               <p className="text-sm font-semibold">{CONTEUDO[id].titulo}</p>
-              <p className="mt-1 text-[11px] text-primary-foreground/60">Abrir informações</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">Abrir informações</p>
             </button>
           ))}
         </div>
@@ -97,12 +97,12 @@ export function RodapeInstitucional() {
           href="https://wa.me/573151495373?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20AvaliaReal."
           target="_blank"
           rel="noreferrer"
-          className="mt-4 block rounded-full bg-primary-foreground/10 px-4 py-3 text-center text-[12px] font-semibold text-primary-foreground ring-1 ring-primary-foreground/15"
+          className="mt-4 block rounded-lg bg-background px-4 py-3 text-center text-[12px] font-semibold text-brand ring-1 ring-border"
         >
           Falar com o Suporte Técnico no WhatsApp
         </a>
 
-        <p className="mt-6 text-center text-[11px] text-primary-foreground/50">
+        <p className="mt-6 text-center text-[11px] text-muted-foreground">
           © 2026 AvaliaReal. Todos os direitos reservados.
         </p>
       </div>

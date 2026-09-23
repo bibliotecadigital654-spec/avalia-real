@@ -289,6 +289,15 @@ function TarefasPage() {
         <div className="mt-3 space-y-3">
           {isLoading ? <p className="text-sm text-muted-foreground">Carregando tarefas…</p> : null}
 
+          {!isLoading && (tarefas ?? []).length === 0 ? (
+            <div className="rounded-lg bg-card px-4 py-6 text-center ring-1 ring-border">
+              <p className="text-sm font-medium">Aguardando novas tarefas</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Os próximos registros do feed automatizado aparecerão aqui em tempo real.
+              </p>
+            </div>
+          ) : null}
+
           {(tarefas ?? []).map((t) => (
             <Link
               key={t.id}

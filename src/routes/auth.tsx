@@ -92,14 +92,9 @@ function AuthPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -top-24 -left-16 h-72 w-72 rounded-full bg-brand-light/40 blur-3xl" />
-        <div className="absolute top-40 -right-12 h-64 w-64 rounded-full bg-accent/25 blur-3xl" />
-      </div>
-
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-10">
         <Link to="/" className="mb-6 flex items-center gap-2.5">
-          <div className="grid size-9 place-items-center rounded-[10px] bg-gradient-brand text-primary-foreground shadow-brand">
+          <div className="grid size-9 place-items-center rounded-lg bg-gradient-brand text-primary-foreground shadow-brand">
             <span className="font-display text-sm font-semibold tracking-tight">AR</span>
           </div>
           <p className="font-display text-base font-semibold tracking-tight">AvaliaReal</p>
@@ -114,7 +109,7 @@ function AuthPage() {
 
         <form
           onSubmit={enviar}
-          className="mt-5 space-y-4 rounded-[20px] bg-card p-5 ring-1 ring-border"
+          className="mt-5 space-y-4 rounded-xl bg-card p-5 ring-1 ring-border"
         >
           {modo === "criar" ? (
             <div>
