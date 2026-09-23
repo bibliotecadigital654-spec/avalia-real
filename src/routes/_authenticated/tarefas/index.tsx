@@ -34,6 +34,94 @@ const ETAPAS_ROBO = [
   "Preparando o mural personalizado…",
 ];
 
+type Missao = { id: string; descricao: string; valor: number; created_at: string };
+
+function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFechar: () => void }) {
+  const [missoes, setMissoes] = useState<Missao[]>([]);
+  const [novas, setNovas] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!userId) return;
+    let ativo = true;
+    supabase
+      .from("transactions")
+      .select("id, descricao, valor, created_at")
+      .eq("user_id", userId)
+      .eq("descricao", "Recompensa AdGem")
+      .order("created_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        if (ativo && data) setMissoes(data as Missao[]);
+      });
+
+    const canal = supabase
+      .channel(`missoes-adgem-${userId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "transactions", filter: `user_id=eq.${userId}` },
+        (payload) => {
+          const m = payload.new as Missao;
+          if (m.descricao !== "Recompensa AdGem") return;
+          setMissoes((atual) => [m, ...atual].slice(0, 20));
+          setNovas((s) => new Set(s).add(m.id));
+          toast.success(`Missão confirmada pela AdGem: + ${brl(Number(m.valor))}`);
+        },
+      )
+      .subscribe();
+    return () => {
+      ativo = false;
+      supabase.removeChannel(canal);
+    };
+  }, [userId]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 p-3 backdrop-blur-sm sm:items-center">
+      <div className="w-full max-w-md rounded-[22px] bg-card p-4 ring-1 ring-border">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="relative flex size-2.5">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-75" />
+              <span className="relative inline-flex size-2.5 rounded-full bg-brand" />
+            </span>
+            <p className="font-display text-sm font-semibold tracking-tight">Missões em tempo real</p>
+          </div>
+          <button onClick={onFechar} aria-label="Fechar" className="rounded-full px-2 py-1 text-sm text-muted-foreground">
+            ✕
+          </button>
+        </div>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          Cada missão aparece aqui assim que a AdGem confirma a conclusão.
+        </p>
+        <div className="mt-3 max-h-[60vh] space-y-2 overflow-y-auto">
+          {missoes.length === 0 ? (
+            <div className="rounded-[14px] bg-background p-6 text-center ring-1 ring-border">
+              <div className="mx-auto size-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+              <p className="mt-3 text-xs text-muted-foreground">Aguardando confirmações da AdGem…</p>
+            </div>
+          ) : (
+            missoes.map((m) => (
+              <div
+                key={m.id}
+                className={`flex items-center justify-between rounded-[14px] bg-background px-3 py-2.5 ring-1 transition-all ${
+                  novas.has(m.id) ? "animate-in fade-in slide-in-from-top-2 ring-brand" : "ring-border"
+                }`}
+              >
+                <div>
+                  <p className="text-xs font-semibold">Missão AdGem confirmada</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {new Date(m.created_at).toLocaleString("pt-BR")}
+                  </p>
+                </div>
+                <span className="font-display text-sm font-semibold text-brand">+ {brl(Number(m.valor))}</span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RoboIA({ userId }: { userId: string | undefined }) {
   const queryClient = useQueryClient();
   const buscarMural = useServerFn(obterMuralAdGem);
@@ -88,11 +176,8 @@ function RoboIA({ userId }: { userId: string | undefined }) {
           : `${Math.max(0, limite - (resultado.usadas ?? 0))} execuções restantes hoje`,
       );
 
-      if (mural?.configured && mural.url) {
-        setMuralUrl(mural.url);
-      } else {
-        toast.success("Robô finalizado! Abra o mural de ofertas para ver as tarefas.");
-      }
+      void mural;
+      setMuralUrl("painel");
       await queryClient.invalidateQueries({ queryKey: ["conta"] });
       await queryClient.invalidateQueries({ queryKey: ["extrato"] });
     } catch (err) {
@@ -140,30 +225,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
 
       {restantes ? <p className="mt-2 text-[11px] text-muted-foreground">{restantes}</p> : null}
 
-      {muralUrl ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 p-3 backdrop-blur-sm sm:items-center">
-          <div className="w-full max-w-md rounded-[22px] bg-card p-3 ring-1 ring-border">
-            <div className="flex items-center justify-between px-2 pb-2">
-              <p className="font-display text-sm font-semibold tracking-tight">
-                Tarefas encontradas pelo Robô
-              </p>
-              <button
-                onClick={() => setMuralUrl(null)}
-                aria-label="Fechar"
-                className="rounded-full px-2 py-1 text-sm text-muted-foreground"
-              >
-                ✕
-              </button>
-            </div>
-            <iframe
-              src={muralUrl}
-              title="Mural de tarefas AdGem"
-              className="block h-[70vh] w-full rounded-[16px] bg-background ring-1 ring-border"
-              allow="clipboard-write"
-            />
-          </div>
-        </div>
-      ) : null}
+      {muralUrl ? <PainelMissoes userId={userId} onFechar={() => setMuralUrl(null)} /> : null}
     </section>
   );
 }
