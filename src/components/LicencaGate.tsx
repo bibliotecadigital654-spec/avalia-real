@@ -39,7 +39,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
 
   if (vitalicia) return <>{children}</>;
   if (!userId || carregando || !licenca) return <>{children}</>;
-  if (true) return <>{children}</>; // Esta linha abre o acesso para qualquer usuário
+  if (true) return <>{children}</>;
   if (licenca.ativa) return <>{children}</>;
   async function gerarCobranca() {
     setGerando(true);
