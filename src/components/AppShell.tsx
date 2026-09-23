@@ -114,8 +114,17 @@ export function AppShell({
                 <span className="text-[10px] font-medium">{item.label}</span>
               </Link>
             ))}
+            <button
+              onClick={() => setInstitucional(true)}
+              className="flex flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-muted-foreground transition-transform active:scale-95"
+            >
+              <span className="font-display text-sm leading-none font-semibold">ℹ</span>
+              <span className="text-[10px] font-medium">Institucional</span>
+            </button>
           </div>
         </nav>
+
+        <PainelInstitucional aberto={institucional} onFechar={() => setInstitucional(false)} />
       </div>
   );
 }
