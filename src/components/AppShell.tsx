@@ -91,15 +91,22 @@ export function AppShell({
             <p className="mt-1 text-xs text-muted-foreground">
               Dúvidas sobre tarefas, planos ou saques? Fale com a nossa equipe.
             </p>
+            <Link
+              to="/suporte"
+              className="mt-3 block rounded-full bg-gradient-safe py-3 text-center text-sm font-semibold text-primary-foreground shadow-safe"
+            >
+              Abrir central de suporte
+            </Link>
             <a
               href={WHATSAPP_SUPORTE}
               target="_blank"
               rel="noreferrer"
-              className="mt-3 block rounded-full bg-gradient-safe py-3 text-center text-sm font-semibold text-primary-foreground shadow-safe"
+              className="mt-2 block rounded-full bg-card py-3 text-center text-sm font-semibold text-brand ring-1 ring-border"
             >
-              Falar no WhatsApp
+              Falar com o Suporte Técnico
             </a>
           </section>
+
         </div>
 
         <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md px-5 pb-5">
