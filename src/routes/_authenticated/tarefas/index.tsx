@@ -261,6 +261,16 @@ function TarefasPage() {
     <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
       <section className="mt-5">
         <div className="rounded-xl bg-card p-5 ring-1 ring-border shadow-safe">
+          <div className="mb-4 flex items-center justify-between rounded-lg bg-brand/10 px-3 py-2 ring-1 ring-brand/30">
+            <span className="text-xs text-muted-foreground">Seu plano</span>
+            <span className="text-sm font-semibold text-brand">
+              {!conta
+                ? "…"
+                : conta.plano === "nenhum"
+                  ? "Nenhum plano ativo"
+                  : `Plano ${conta.plano.charAt(0).toUpperCase()}${conta.plano.slice(1)}${conta.isAdmin ? " · Vitalício" : ""}`}
+            </span>
+          </div>
           <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
             Saldo acumulado
           </p>

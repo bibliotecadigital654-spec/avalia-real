@@ -236,7 +236,7 @@ function Index() {
             Saldo acumulado
           </p>
           <p className="balance-pop mt-2 font-display text-5xl leading-none font-semibold tracking-tight text-safe">
-            {logado ? brl(saldo ?? 0) : "R$ 1.248,00"}
+            {brl(logado ? (saldo ?? 0) : 0)}
           </p>
           {logado ? (
             <p className="mt-2 text-xs text-muted-foreground">
