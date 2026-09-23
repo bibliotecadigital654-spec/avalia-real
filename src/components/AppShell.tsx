@@ -2,12 +2,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useConta } from "@/hooks/useConta";
 
 type NavItem = { to: string; label: string; glyph: string };
 
 export const WHATSAPP_SUPORTE =
-  "https://wa.me/573151495373?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20AvaliaReal.";
+  "https://api.whatsapp.com/send?phone=573151495373&text=Ol%C3%A1%21%20Preciso%20de%20ajuda%20com%20o%20AvaliaReal.";
 
 function saudacao(): string {
   const h = new Date().getHours();
@@ -35,7 +34,6 @@ export function AppShell({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data: conta } = useConta();
 
   async function sair() {
     await queryClient.cancelQueries();
@@ -93,8 +91,8 @@ export function AppShell({
             <a
               href={WHATSAPP_SUPORTE}
               target="_blank"
-              rel="noreferrer"
-              className="mt-2 block rounded-lg bg-background py-3 text-center text-sm font-semibold text-brand ring-1 ring-border"
+              rel="noopener noreferrer"
+              className="mt-2 block rounded-lg bg-safe py-3 text-center text-sm font-bold text-ink shadow-safe ring-1 ring-safe/40 transition-transform active:scale-[.98]"
             >
               Falar com o Suporte Técnico
             </a>
