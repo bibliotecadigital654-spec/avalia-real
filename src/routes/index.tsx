@@ -9,7 +9,7 @@ import { brl } from "@/lib/format";
 import { mensagemAuth } from "@/lib/erros-auth";
 import { cpfValido, mascararCpf } from "@/lib/cpf";
 import { CameraCapture } from "@/components/CameraCapture";
-import { RodapeInstitucional } from "@/components/RodapeInstitucional";
+import { PainelInstitucional } from "@/components/RodapeInstitucional";
 import { registrarVerificacao } from "@/lib/kyc.functions";
 
 export const Route = createFileRoute("/")({
