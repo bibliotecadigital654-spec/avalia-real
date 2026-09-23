@@ -118,7 +118,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
                   </p>
                   <button
                     onClick={() => copiarCodigoPix(pixCopiaECola)}
-                    className="mt-3 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98]"
+                    className="mt-3 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-foreground shadow-safe transition-transform active:scale-[.98]"
                   >
                     Copiar Código Pix
                   </button>
@@ -196,7 +196,7 @@ export function LicencaGate({ userId, children }: { userId?: string | undefined;
                   <button
                     onClick={() => gerarCobranca(planoEscolhido)}
                     disabled={gerando || !nomeOk || !documentoOk}
-                    className="w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
+                    className="w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
                   >
                     {gerando ? "Gerando cobrança…" : "Gerar Pix do plano escolhido"}
                   </button>
