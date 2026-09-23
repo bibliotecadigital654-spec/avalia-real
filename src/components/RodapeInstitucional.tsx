@@ -73,37 +73,40 @@ export function RodapeInstitucional() {
   const modal = aberto ? CONTEUDO[aberto] : null;
 
   return (
-    <footer className="relative z-10 mt-12 bg-ink/95 px-5 py-8 text-primary-foreground">
-      <div className="mx-auto w-full max-w-md">
+    <footer className="relative z-10 mt-12 bg-ink/95 px-5 py-10 text-primary-foreground">
+      <div className="mx-auto w-full max-w-4xl">
         <p className="font-display text-sm font-semibold tracking-tight">AvaliaReal</p>
         <p className="mt-1 text-xs text-primary-foreground/60">
           Microtarefas digitais pagas em reais, com verificação de identidade e regras claras.
         </p>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
           {(Object.keys(CONTEUDO) as ModalId[]).map((id) => (
             <button
               key={id}
               onClick={() => setAberto(id)}
-              className="rounded-full bg-primary-foreground/10 px-3.5 py-2 text-[11px] font-semibold text-primary-foreground ring-1 ring-primary-foreground/15"
+              className="rounded-[16px] bg-primary-foreground/10 px-4 py-4 text-left ring-1 ring-primary-foreground/15 transition-transform active:scale-[.99]"
             >
-              {CONTEUDO[id].titulo}
+              <p className="text-sm font-semibold">{CONTEUDO[id].titulo}</p>
+              <p className="mt-1 text-[11px] text-primary-foreground/60">Abrir informações</p>
             </button>
           ))}
-          <a
-            href="https://wa.me/573151495373?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20AvaliaReal."
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full bg-primary-foreground/10 px-3.5 py-2 text-[11px] font-semibold text-primary-foreground ring-1 ring-primary-foreground/15"
-          >
-            Suporte no WhatsApp
-          </a>
         </div>
+
+        <a
+          href="https://wa.me/573151495373?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20o%20AvaliaReal."
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 block rounded-full bg-primary-foreground/10 px-4 py-3 text-center text-[12px] font-semibold text-primary-foreground ring-1 ring-primary-foreground/15"
+        >
+          Falar com o Suporte Técnico no WhatsApp
+        </a>
 
         <p className="mt-6 text-center text-[11px] text-primary-foreground/50">
           © 2026 AvaliaReal. Todos os direitos reservados.
         </p>
       </div>
+
 
       {modal ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 p-4 backdrop-blur-sm sm:items-center">
