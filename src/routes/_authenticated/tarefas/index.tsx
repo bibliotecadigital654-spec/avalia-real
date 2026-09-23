@@ -96,7 +96,7 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
           {missoes.length === 0 ? (
             <div className="rounded-[14px] bg-background p-6 text-center ring-1 ring-border">
               <div className="mx-auto size-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-              <p className="mt-3 text-xs text-muted-foreground">Aguardando confirmações da AdGem…</p>
+              <p className="mt-3 text-xs text-muted-foreground">Aguardando confirmações do servidor…</p>
             </div>
           ) : (
             missoes.map((m) => (

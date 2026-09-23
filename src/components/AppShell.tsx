@@ -16,8 +16,7 @@ function saudacao(): string {
 }
 
 const NAV: NavItem[] = [
-  { to: "/tarefas", label: "Tarefas", glyph: "☰" },
-  { to: "/ofertas", label: "Ofertas", glyph: "◆" },
+  { to: "/tarefas", label: "Home", glyph: "⌂" },
   { to: "/carteira", label: "Carteira", glyph: "◍" },
   { to: "/suporte", label: "Suporte", glyph: "✆" },
 ];
