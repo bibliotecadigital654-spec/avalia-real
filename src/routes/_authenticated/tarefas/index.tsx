@@ -192,7 +192,7 @@ function RoboIA({ userId }: { userId: string | undefined }) {
   const etapa = ETAPAS_ROBO[Math.min(ETAPAS_ROBO.length - 1, Math.floor(progresso / 20))];
 
   return (
-    <section className="mt-5 overflow-hidden rounded-[22px] bg-card p-5 ring-1 ring-border">
+      <section className="mt-5 overflow-hidden rounded-xl bg-card p-5 ring-1 ring-border">
       <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
         Automação inteligente
       </p>
@@ -260,11 +260,11 @@ function TarefasPage() {
   return (
     <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
       <section className="mt-5">
-        <div className="rounded-[22px] bg-gradient-safe p-5 text-primary-foreground shadow-safe">
-          <p className="text-xs font-medium tracking-[0.18em] text-primary-foreground/60 uppercase">
+        <div className="rounded-xl bg-card p-5 ring-1 ring-border shadow-safe">
+          <p className="text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
             Saldo acumulado
           </p>
-          <p className="balance-pop mt-2 font-display text-4xl leading-none font-semibold tracking-tight">
+          <p className="balance-pop mt-2 font-display text-4xl leading-none font-semibold tracking-tight text-safe">
             {brl(conta?.saldo ?? 0)}
           </p>
           <Link

@@ -4,10 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * AvaliaReal design system — "Y2K brilhante".
- * All colors are oklch tokens. Never hardcode colors in components.
- */
+/* AvaliaReal — ultra dark premium. */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 6px);
@@ -18,8 +15,8 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -50,58 +47,61 @@
   --color-mint: var(--mint);
   --color-ink: var(--ink);
   --color-paper: var(--paper);
+  --color-safe: var(--safe);
 }
 
 :root {
-  --radius: 1rem;
+  color-scheme: dark;
+  --radius: 0.75rem;
 
-  --brand: oklch(0.545 0.263 285);
-  --brand-light: oklch(0.66 0.19 285);
-  --brand-deep: oklch(0.365 0.207 285);
-  --chrome: oklch(0.505 0.263 275);
-  --coin: oklch(0.876 0.164 89);
-  --mint: oklch(0.715 0.135 215);
-  --ink: oklch(0.235 0.055 285);
-  --paper: oklch(0.955 0.017 300);
+  --brand: oklch(0.78 0.15 85);
+  --brand-light: oklch(0.86 0.13 89);
+  --brand-deep: oklch(0.58 0.13 76);
+  --chrome: oklch(0.68 0.04 85);
+  --coin: oklch(0.82 0.15 88);
+  --mint: oklch(0.72 0.17 155);
+  --safe: oklch(0.72 0.17 155);
+  --ink: oklch(0.985 0 0);
+  --paper: oklch(0 0 0);
 
   --background: var(--paper);
   --foreground: var(--ink);
-  --card: oklch(1 0 0);
+  --card: oklch(0.145 0.004 285);
   --card-foreground: var(--ink);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.145 0.004 285);
   --popover-foreground: var(--ink);
   --primary: var(--brand);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.975 0.012 300);
+  --primary-foreground: oklch(0.08 0.01 85);
+  --secondary: oklch(0.19 0.005 285);
   --secondary-foreground: var(--ink);
-  --muted: oklch(0.965 0.012 300);
-  --muted-foreground: oklch(0.55 0.035 285);
-  --accent: oklch(0.708 0.187 45);
-  --accent-foreground: oklch(1 0 0);
+  --muted: oklch(0.19 0.005 285);
+  --muted-foreground: oklch(0.67 0.012 285);
+  --accent: oklch(0.78 0.15 85);
+  --accent-foreground: oklch(0.08 0.01 85);
   --destructive: oklch(0.6 0.23 27);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.235 0.055 285 / 8%);
-  --input: oklch(0.235 0.055 285 / 12%);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
   --ring: var(--brand);
 
   --gradient-brand: linear-gradient(
     135deg,
-    oklch(0.66 0.19 285) 0%,
-    oklch(0.545 0.263 285) 55%,
-    oklch(0.365 0.207 285) 100%
+    oklch(0.88 0.13 90) 0%,
+    oklch(0.76 0.15 82) 52%,
+    oklch(0.58 0.13 76) 100%
   );
   --gradient-safe: linear-gradient(
     160deg,
-    oklch(0.505 0.263 275) 0%,
-    oklch(0.545 0.263 285) 42%,
-    oklch(0.365 0.207 285) 100%
+    oklch(0.2 0.012 85) 0%,
+    oklch(0.135 0.006 285) 52%,
+    oklch(0.08 0.003 285) 100%
   );
-  --shadow-brand: 0 14px 28px -12px oklch(0.545 0.263 285 / 0.7),
-    inset 0 1px 0 oklch(1 0 0 / 0.35);
-  --shadow-coin: 0 10px 22px -8px oklch(0.876 0.164 89 / 0.8),
-    inset 0 1px 0 oklch(1 0 0 / 0.7);
-  --shadow-safe: 0 18px 40px -18px oklch(0.365 0.207 285 / 0.7),
-    inset 0 1px 0 oklch(1 0 0 / 0.4);
+  --shadow-brand: 0 14px 30px -16px oklch(0.78 0.15 85 / 0.55),
+    inset 0 1px 0 oklch(1 0 0 / 0.22);
+  --shadow-coin: 0 10px 24px -14px oklch(0.82 0.15 88 / 0.6),
+    inset 0 1px 0 oklch(1 0 0 / 0.3);
+  --shadow-safe: 0 20px 44px -26px oklch(0.78 0.15 85 / 0.5),
+    inset 0 1px 0 oklch(1 0 0 / 0.12);
 }
 
 @layer base {
@@ -114,6 +114,11 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--brand) 35%, transparent);
+    color: var(--foreground);
   }
 }
 
