@@ -21,7 +21,9 @@ const NAV: NavItem[] = [
   { to: "/tarefas", label: "Tarefas", glyph: "☰" },
   { to: "/ofertas", label: "Ofertas", glyph: "◆" },
   { to: "/carteira", label: "Carteira", glyph: "◍" },
+  { to: "/suporte", label: "Suporte", glyph: "✆" },
 ];
+
 
 export function AppShell({
   children,
