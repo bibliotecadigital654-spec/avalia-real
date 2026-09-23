@@ -3,20 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AppShell } from "@/components/AppShell";
 import { useConta } from "@/hooks/useConta";
-import { obterMuralBitLabs } from "@/lib/bitlabs.functions";
+import { obterMuralAdGem } from "@/lib/adgem.functions";
 
 export const Route = createFileRoute("/_authenticated/ofertas")({
   head: () => ({
     meta: [
-      { title: "Pesquisas BitLabs | AvaliaReal" },
+      { title: "Mural AdGem | AvaliaReal" },
       {
         name: "description",
-        content: "Acesse pesquisas digitais da BitLabs e acumule recompensas na sua carteira.",
+        content: "Acesse as tarefas da rede AdGem e acumule recompensas na sua carteira.",
       },
-      { property: "og:title", content: "Pesquisas BitLabs | AvaliaReal" },
+      { property: "og:title", content: "Mural AdGem | AvaliaReal" },
       {
         property: "og:description",
-        content: "Acesse pesquisas digitais da BitLabs e acumule recompensas na sua carteira.",
+        content: "Acesse as tarefas da rede AdGem e acumule recompensas na sua carteira.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -27,10 +27,10 @@ export const Route = createFileRoute("/_authenticated/ofertas")({
 
 function OfertasPage() {
   const { data: conta } = useConta();
-  const buscarMural = useServerFn(obterMuralBitLabs);
+  const buscarMural = useServerFn(obterMuralAdGem);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["mural-bitlabs", conta?.userId],
+    queryKey: ["mural-adgem", conta?.userId],
     queryFn: () => buscarMural(),
     enabled: Boolean(conta?.userId),
   });
@@ -38,35 +38,35 @@ function OfertasPage() {
   return (
     <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
       <section className="mt-5 text-center">
-        <h1 className="font-display text-lg font-semibold tracking-tight">Ofertas de parceiros</h1>
+        <h1 className="font-display text-lg font-semibold tracking-tight">Mural de tarefas AdGem</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Pesquisas digitais disponíveis para o seu perfil.
+          Tarefas e ofertas oficiais disponíveis para o seu perfil.
         </p>
 
         <div className="mx-auto mt-4 w-full text-left">
           {isLoading ? (
             <div className="grid min-h-80 place-items-center rounded-lg bg-card ring-1 ring-border">
-              <p className="text-sm text-muted-foreground">Carregando pesquisas…</p>
+              <p className="text-sm text-muted-foreground">Carregando o mural…</p>
             </div>
           ) : null}
           {isError ? (
             <div className="rounded-lg bg-card p-5 text-sm text-muted-foreground ring-1 ring-border">
-              Não conseguimos carregar as pesquisas agora. Tente novamente em instantes.
+              Não conseguimos carregar as tarefas agora. Tente novamente em instantes.
             </div>
           ) : null}
           {!isLoading && !isError && data?.configured && data.url ? (
             <iframe
               src={data.url}
-              title="Mural de pesquisas BitLabs"
+              title="Mural de tarefas AdGem"
               className="mx-auto block h-[68vh] min-h-[560px] w-full rounded-lg bg-card ring-1 ring-border"
               allow="clipboard-write"
             />
           ) : null}
           {!isLoading && !isError && data && !data.configured ? (
             <div className="rounded-lg bg-card p-5 ring-1 ring-border">
-              <p className="text-sm font-semibold">Mural BitLabs em configuração</p>
+              <p className="text-sm font-semibold">Mural AdGem em configuração</p>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                As pesquisas serão exibidas aqui assim que a análise da conta parceira for concluída.
+                As tarefas serão exibidas aqui assim que a liberação da rede parceira for concluída.
               </p>
             </div>
           ) : null}
