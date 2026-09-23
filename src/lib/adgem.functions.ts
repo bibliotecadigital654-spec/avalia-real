@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const URL_PADRAO = "https://adgem.com";
+const URL_PADRAO = "https://adunits.adgem.com/wall?appid=33643&playerid=";
 
 export const obterMuralAdGem = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
