@@ -173,29 +173,29 @@ function CarteiraPage() {
 
   return (
     <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
-      <section className="mt-5 rounded-[22px] bg-gradient-safe p-5 text-primary-foreground shadow-safe">
-        <p className="text-xs font-medium tracking-[0.18em] text-primary-foreground/60 uppercase">
+      <section className="mt-5 rounded-[22px] bg-gradient-safe p-5 text-foreground shadow-safe">
+        <p className="text-xs font-medium tracking-[0.18em] text-foreground/60 uppercase">
           Saldo disponível
         </p>
         <p className="balance-pop mt-2 font-display text-5xl leading-none font-semibold tracking-tight">
           {brl(conta?.saldo ?? 0)}
         </p>
-        <p className="mt-1 text-xs text-primary-foreground/60">
+        <p className="mt-1 text-xs text-foreground/60">
           Valores aprovados pela equipe já entram aqui
         </p>
 
-        <div className="mt-4 space-y-2 rounded-[16px] bg-primary-foreground/10 p-3">
+        <div className="mt-4 space-y-2 rounded-[16px] bg-foreground/10 p-3">
           <input
             inputMode="decimal"
             value={valor}
             onChange={(e) => setValor(e.target.value)}
             placeholder="Quanto quer sacar? (mín. R$ 20,00)"
-            className="w-full rounded-full bg-primary-foreground/10 px-4 py-3 text-sm text-primary-foreground ring-1 ring-primary-foreground/20 outline-none placeholder:text-primary-foreground/50 focus:ring-2"
+            className="w-full rounded-full bg-foreground/10 px-4 py-3 text-sm text-foreground ring-1 ring-foreground/20 outline-none placeholder:text-foreground/50 focus:ring-2"
           />
           <select
             value={pixTipo}
             onChange={(e) => setPixTipo(e.target.value)}
-            className="w-full rounded-full bg-primary-foreground/10 px-4 py-3 text-sm text-primary-foreground ring-1 ring-primary-foreground/20 outline-none focus:ring-2"
+            className="w-full rounded-full bg-foreground/10 px-4 py-3 text-sm text-foreground ring-1 ring-foreground/20 outline-none focus:ring-2"
           >
             {TIPOS_PIX.map((t) => (
               <option key={t.valor} value={t.valor} className="text-ink">
@@ -207,7 +207,7 @@ function CarteiraPage() {
             value={pixChave}
             onChange={(e) => setPixChave(e.target.value)}
             placeholder="Sua chave Pix"
-            className="w-full rounded-full bg-primary-foreground/10 px-4 py-3 text-sm text-primary-foreground ring-1 ring-primary-foreground/20 outline-none placeholder:text-primary-foreground/50 focus:ring-2"
+            className="w-full rounded-full bg-foreground/10 px-4 py-3 text-sm text-foreground ring-1 ring-foreground/20 outline-none placeholder:text-foreground/50 focus:ring-2"
           />
           <button
             onClick={iniciarSaque}
@@ -220,7 +220,7 @@ function CarteiraPage() {
                 ? "Enviando…"
                 : "Solicitar Saque via Pix"}
           </button>
-          <p className="text-[11px] text-primary-foreground/60">
+          <p className="text-[11px] text-foreground/60">
             Valor mínimo de saque: {brl(SAQUE_MINIMO)} · 1 solicitação a cada 7 dias
             {isento ? " (livre para o administrador)" : ""}
           </p>
@@ -264,7 +264,7 @@ function CarteiraPage() {
                 if (numero !== null) void solicitar(numero);
               }}
               disabled={!rostoCapturado || enviando}
-              className="mt-4 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-primary-foreground shadow-safe disabled:opacity-60"
+              className="mt-4 w-full rounded-full bg-gradient-safe py-3.5 text-sm font-semibold text-foreground shadow-safe disabled:opacity-60"
             >
               {enviando ? "Processando…" : "Liberar saque verificado"}
             </button>

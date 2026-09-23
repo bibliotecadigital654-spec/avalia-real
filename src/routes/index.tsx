@@ -314,10 +314,10 @@ function Index() {
             {sucesso ? (
               <div
                 role="status"
-                className="mt-4 rounded-[16px] bg-gradient-safe p-4 text-primary-foreground shadow-safe"
+                className="mt-4 rounded-[16px] bg-gradient-safe p-4 text-foreground shadow-safe"
               >
                 <p className="text-sm font-semibold">✓ Tudo certo!</p>
-                <p className="mt-1 text-xs text-primary-foreground/80">{sucesso}</p>
+                <p className="mt-1 text-xs text-foreground/80">{sucesso}</p>
                 <button
                   type="button"
                   onClick={() => {

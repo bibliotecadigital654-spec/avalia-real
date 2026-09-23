@@ -244,7 +244,7 @@ function AdminPage() {
                 <button
                   onClick={() => revisarSaque(s.id, true)}
                   disabled={processando === s.id}
-                  className="flex-1 rounded-full bg-gradient-safe py-2.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
+                  className="flex-1 rounded-full bg-gradient-safe py-2.5 text-sm font-semibold text-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
                 >
                   Aprovar Saque
                 </button>
@@ -348,7 +348,7 @@ function AdminPage() {
                   <button
                     onClick={() => revisarEnvio(e.id, true)}
                     disabled={processando === e.id}
-                    className="flex-1 rounded-full bg-gradient-safe py-2.5 text-sm font-semibold text-primary-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
+                    className="flex-1 rounded-full bg-gradient-safe py-2.5 text-sm font-semibold text-foreground shadow-safe transition-transform active:scale-[.98] disabled:opacity-60"
                   >
                     Aprovar tarefa
                   </button>
