@@ -11,6 +11,7 @@ import { cpfValido, mascararCpf } from "@/lib/cpf";
 import { CameraCapture } from "@/components/CameraCapture";
 import { PainelInstitucional } from "@/components/RodapeInstitucional";
 import { registrarVerificacao } from "@/lib/kyc.functions";
+import { AvaliaRealLogo } from "@/components/AvaliaRealLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -219,9 +220,7 @@ function Index() {
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <main className="relative z-10 mx-auto flex w-full max-w-md flex-col justify-center px-5 py-12">
         <div className="flex items-center gap-2.5">
-          <div className="grid size-9 place-items-center rounded-lg bg-gradient-brand text-primary-foreground shadow-brand">
-            <span className="font-display text-sm font-semibold tracking-tight">AR</span>
-          </div>
+          <AvaliaRealLogo className="size-9 shrink-0 drop-shadow-[0_8px_16px_color-mix(in_oklab,var(--safe)_22%,transparent)]" />
           <p className="font-display text-base font-semibold tracking-tight">AvaliaReal</p>
         </div>
 
