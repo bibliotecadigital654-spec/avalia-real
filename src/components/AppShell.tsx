@@ -2,6 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { PainelInstitucional } from "@/components/RodapeInstitucional";
 
 type NavItem = { to: string; label: string; glyph: string };
