@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep AvaliaReal branding centralized in the shared SVG logo component and derive install icons from the matching public SVG so every surface stays consistent.
