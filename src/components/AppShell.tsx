@@ -37,6 +37,9 @@ export function AppShell({
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [institucional, setInstitucional] = useState(false);
+  const { user } = useAuth();
+  // O botão do painel de administração aparece somente para o e-mail do administrador master.
+  const isAdminMaster = temLicencaVitalicia(user?.email);
 
   async function sair() {
     await queryClient.cancelQueries();
