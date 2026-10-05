@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { PainelInstitucional } from "@/components/RodapeInstitucional";
+import { AvaliaRealLogo } from "@/components/AvaliaRealLogo";
 
 type NavItem = { to: string; label: string; glyph: string };
 
@@ -51,9 +52,7 @@ export function AppShell({
         <div className="relative z-10 mx-auto w-full max-w-md px-5 pt-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="grid size-9 place-items-center rounded-lg bg-gradient-brand text-primary-foreground shadow-brand">
-                <span className="font-display text-sm font-semibold tracking-tight">AR</span>
-              </div>
+              <AvaliaRealLogo className="size-9 shrink-0 drop-shadow-[0_8px_16px_color-mix(in_oklab,var(--safe)_22%,transparent)]" />
               <div className="leading-none">
                 <p className="font-display text-base font-semibold tracking-tight">AvaliaReal</p>
                 <p className="text-[11px] font-medium text-muted-foreground">
