@@ -38,7 +38,7 @@ export function GerenciarTarefas() {
     setSalvando(true);
     const { error } = await supabase.from("tasks").insert({ ...form, valor, ativa: true });
     setSalvando(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Tarefa publicada");
     setForm(VAZIO);
     await atualizar();
@@ -46,14 +46,14 @@ export function GerenciarTarefas() {
 
   async function alternar(id: string, ativa: boolean) {
     const { error } = await supabase.from("tasks").update({ ativa: !ativa }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     await atualizar();
   }
 
   async function excluir(id: string) {
     if (!confirm("Excluir esta tarefa?")) return;
     const { error } = await supabase.from("tasks").delete().eq("id", id);
-    if (error) return toast.error("Não foi possível excluir (talvez já tenha envios). Pause-a em vez disso.");
+    if (error) { toast.error("Não foi possível excluir (talvez já tenha envios). Pause-a em vez disso."); return; }
     await atualizar();
   }
 

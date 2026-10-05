@@ -32,7 +32,7 @@ const ETAPAS_ROBO = [
   "Preparando o mural personalizado…",
 ];
 
-type Missao = { id: string; descricao: string; valor: number; created_at: string };
+type Missao = { id: string; descricao: string; valor: number; created_at: string; tipo?: string };
 
 function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFechar: () => void }) {
   const [missoes, setMissoes] = useState<Missao[]>([]);
@@ -43,9 +43,9 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
     let ativo = true;
     supabase
       .from("transactions")
-      .select("id, descricao, valor, created_at")
+      .select("id, descricao, valor, created_at, tipo")
       .eq("user_id", userId)
-      .eq("descricao", "Recompensa AdGem")
+      .in("tipo", ["ganho", "credito"])
       .order("created_at", { ascending: false })
       .limit(20)
       .then(({ data }) => {
@@ -53,16 +53,16 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
       });
 
     const canal = supabase
-      .channel(`missoes-adgem-${userId}`)
+      .channel(`ganhos-${userId}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "transactions", filter: `user_id=eq.${userId}` },
         (payload) => {
           const m = payload.new as Missao;
-          if (m.descricao !== "Recompensa AdGem") return;
+          if (m.tipo !== "ganho" && m.tipo !== "credito") return;
           setMissoes((atual) => [m, ...atual].slice(0, 20));
           setNovas((s) => new Set(s).add(m.id));
-          toast.success(`Missão confirmada pela AdGem: + ${brl(Number(m.valor))}`);
+          toast.success(`Ganho confirmado: + ${brl(Number(m.valor))}`);
         },
       )
       .subscribe();
@@ -105,7 +105,7 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
                 }`}
               >
                 <div>
-                  <p className="text-xs font-semibold">Missão AdGem confirmada</p>
+                  <p className="text-xs font-semibold">{m.descricao}</p>
                   <p className="text-[11px] text-muted-foreground">
                     {new Date(m.created_at).toLocaleString("pt-BR")}
                   </p>
