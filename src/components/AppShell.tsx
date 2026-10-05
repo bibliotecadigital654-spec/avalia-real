@@ -64,12 +64,12 @@ export function AppShell({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {isAdmin ? (
+              {isAdminMaster ? (
                 <Link
                   to="/admin"
                   className="rounded-lg bg-card px-3 py-1.5 text-[11px] font-semibold text-brand ring-1 ring-border"
                 >
-                  Admin
+                  Painel de Administração
                 </Link>
               ) : null}
               <button
