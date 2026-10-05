@@ -28,11 +28,9 @@ const NAV: NavItem[] = [
 export function AppShell({
   children,
   nome,
-  isAdmin,
 }: {
   children: ReactNode;
   nome?: string | undefined;
-  isAdmin?: boolean | undefined;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
