@@ -253,7 +253,7 @@ function TarefasPage() {
   const enviadas = new Set((meus ?? []).map((s) => s.task_id));
 
   return (
-    <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
+    <AppShell nome={conta?.nome}>
       <section className="mt-5">
         <div className="rounded-xl bg-card p-5 ring-1 ring-border shadow-safe">
           <div className="mb-4 flex items-center justify-between rounded-lg bg-brand/10 px-3 py-2 ring-1 ring-brand/30">

@@ -2,6 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { PainelInstitucional } from "@/components/RodapeInstitucional";
 
 type NavItem = { to: string; label: string; glyph: string };
@@ -26,15 +28,16 @@ const NAV: NavItem[] = [
 export function AppShell({
   children,
   nome,
-  isAdmin,
 }: {
   children: ReactNode;
   nome?: string | undefined;
-  isAdmin?: boolean | undefined;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [institucional, setInstitucional] = useState(false);
+  const { user } = useAuth();
+  // O botão do painel de administração aparece somente para o e-mail do administrador master.
+  const isAdminMaster = temLicencaVitalicia(user?.email);
 
   async function sair() {
     await queryClient.cancelQueries();
@@ -59,12 +62,12 @@ export function AppShell({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {isAdmin ? (
+              {isAdminMaster ? (
                 <Link
                   to="/admin"
                   className="rounded-lg bg-card px-3 py-1.5 text-[11px] font-semibold text-brand ring-1 ring-border"
                 >
-                  Admin
+                  Painel de Administração
                 </Link>
               ) : null}
               <button

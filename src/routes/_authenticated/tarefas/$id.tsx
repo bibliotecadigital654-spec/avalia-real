@@ -86,7 +86,7 @@ function TarefaDetalhe() {
   }
 
   return (
-    <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
+    <AppShell nome={conta?.nome}>
       <section className="mt-5">
         <div className="overflow-hidden rounded-[20px] bg-card ring-1 ring-border">
           {isLoading || !tarefa ? (

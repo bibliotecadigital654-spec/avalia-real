@@ -172,7 +172,7 @@ function CarteiraPage() {
   const bloqueado = diasRestantes > 0;
 
   return (
-    <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
+    <AppShell nome={conta?.nome}>
       <section className="mt-5 rounded-[22px] bg-gradient-safe p-5 text-foreground shadow-safe">
         <p className="text-xs font-medium tracking-[0.18em] text-foreground/60 uppercase">
           Saldo disponível

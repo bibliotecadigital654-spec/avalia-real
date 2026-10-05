@@ -44,7 +44,7 @@ function SuportePage() {
   const { data: conta } = useConta();
 
   return (
-    <AppShell nome={conta?.nome} isAdmin={conta?.isAdmin}>
+    <AppShell nome={conta?.nome}>
       <section className="mt-5 rounded-[22px] bg-card p-6 text-center ring-1 ring-border">
         <span className="inline-flex items-center gap-2 rounded-full bg-safe/10 px-3 py-1 text-[11px] font-semibold text-safe">
           Atendimento humano

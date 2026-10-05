@@ -182,7 +182,7 @@ function AdminPage() {
   );
 
   return (
-    <AppShell nome={conta?.nome} isAdmin>
+    <AppShell nome={conta?.nome}>
       <section className="mt-5">
         <h1 className="font-display text-lg font-semibold tracking-tight">Painel Master</h1>
         <p className="mt-1 text-sm text-muted-foreground">Controle geral do AvaliaReal.</p>
