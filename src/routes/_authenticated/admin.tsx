@@ -8,6 +8,7 @@ import { useConta } from "@/hooks/useConta";
 import { useAuth } from "@/hooks/useAuth";
 import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { brl, dataHora } from "@/lib/format";
+import { GerenciarTarefas } from "@/components/GerenciarTarefas";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -365,6 +366,7 @@ function AdminPage() {
           ))}
         </div>
       </section>
+      <GerenciarTarefas />
     </AppShell>
   );
 }

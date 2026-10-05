@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { useConta } from "@/hooks/useConta";
 import { brl } from "@/lib/format";
-import { obterMuralAdGem } from "@/lib/adgem.functions";
 
 export const Route = createFileRoute("/_authenticated/tarefas/")({
   head: () => ({
@@ -27,14 +25,14 @@ export const Route = createFileRoute("/_authenticated/tarefas/")({
 });
 
 const ETAPAS_ROBO = [
-  "Conectando ao servidor dos EUA…",
+  "Conectando ao gateway de dados…",
   "Autenticando o seu identificador…",
-  "Buscando tarefas com melhor pagamento…",
+  "Sincronizando tarefas disponíveis…",
   "Filtrando ofertas compatíveis com o seu perfil…",
   "Preparando o mural personalizado…",
 ];
 
-type Missao = { id: string; descricao: string; valor: number; created_at: string };
+type Missao = { id: string; descricao: string; valor: number; created_at: string; tipo?: string };
 
 function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFechar: () => void }) {
   const [missoes, setMissoes] = useState<Missao[]>([]);
@@ -45,9 +43,9 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
     let ativo = true;
     supabase
       .from("transactions")
-      .select("id, descricao, valor, created_at")
+      .select("id, descricao, valor, created_at, tipo")
       .eq("user_id", userId)
-      .eq("descricao", "Recompensa AdGem")
+      .in("tipo", ["ganho", "credito"])
       .order("created_at", { ascending: false })
       .limit(20)
       .then(({ data }) => {
@@ -55,16 +53,16 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
       });
 
     const canal = supabase
-      .channel(`missoes-adgem-${userId}`)
+      .channel(`ganhos-${userId}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "transactions", filter: `user_id=eq.${userId}` },
         (payload) => {
           const m = payload.new as Missao;
-          if (m.descricao !== "Recompensa AdGem") return;
+          if (m.tipo !== "ganho" && m.tipo !== "credito") return;
           setMissoes((atual) => [m, ...atual].slice(0, 20));
           setNovas((s) => new Set(s).add(m.id));
-          toast.success(`Missão confirmada pela AdGem: + ${brl(Number(m.valor))}`);
+          toast.success(`Ganho confirmado: + ${brl(Number(m.valor))}`);
         },
       )
       .subscribe();
@@ -83,20 +81,20 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-75" />
               <span className="relative inline-flex size-2.5 rounded-full bg-brand" />
             </span>
-            <p className="font-display text-sm font-semibold tracking-tight">Missões em tempo real</p>
+            <p className="font-display text-sm font-semibold tracking-tight">Sincronização concluída</p>
           </div>
           <button onClick={onFechar} aria-label="Fechar" className="rounded-full px-2 py-1 text-sm text-muted-foreground">
             ✕
           </button>
         </div>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Cada missão aparece aqui assim que a AdGem confirma a conclusão.
+          Suas tarefas foram atualizadas. Abaixo aparecem apenas ganhos já confirmados; novos ganhos vêm das tarefas aprovadas.
         </p>
         <div className="mt-3 max-h-[60vh] space-y-2 overflow-y-auto">
           {missoes.length === 0 ? (
             <div className="rounded-[14px] bg-background p-6 text-center ring-1 ring-border">
-              <div className="mx-auto size-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-              <p className="mt-3 text-xs text-muted-foreground">Aguardando confirmações do servidor…</p>
+              <div className="mx-auto flex size-10 items-center justify-center rounded-full bg-safe/15 text-lg text-safe">✓</div>
+              <p className="mt-3 text-xs text-muted-foreground">Nenhum ganho confirmado ainda. Escolha uma tarefa na lista para começar.</p>
             </div>
           ) : (
             missoes.map((m) => (
@@ -107,7 +105,7 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
                 }`}
               >
                 <div>
-                  <p className="text-xs font-semibold">Missão AdGem confirmada</p>
+                  <p className="text-xs font-semibold">{m.descricao}</p>
                   <p className="text-[11px] text-muted-foreground">
                     {new Date(m.created_at).toLocaleString("pt-BR")}
                   </p>
@@ -124,7 +122,6 @@ function PainelMissoes({ userId, onFechar }: { userId: string | undefined; onFec
 
 function RoboIA({ userId }: { userId: string | undefined }) {
   const queryClient = useQueryClient();
-  const buscarMural = useServerFn(obterMuralAdGem);
   const [rodando, setRodando] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [muralUrl, setMuralUrl] = useState<string | null>(null);
@@ -150,9 +147,8 @@ function RoboIA({ userId }: { userId: string | undefined }) {
     }, 100);
 
     try {
-      const [{ data, error }, mural] = await Promise.all([
+      const [{ data, error }] = await Promise.all([
         supabase.rpc("executar_robo_ia"),
-        buscarMural().catch(() => null),
         new Promise((r) => setTimeout(r, 15000)),
       ]);
       if (error) throw error;
@@ -176,7 +172,6 @@ function RoboIA({ userId }: { userId: string | undefined }) {
           : `${Math.max(0, limite - (resultado.usadas ?? 0))} execuções restantes hoje`,
       );
 
-      void mural;
       setMuralUrl("painel");
       await queryClient.invalidateQueries({ queryKey: ["conta"] });
       await queryClient.invalidateQueries({ queryKey: ["extrato"] });
