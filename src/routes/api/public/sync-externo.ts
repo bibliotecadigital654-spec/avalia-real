@@ -31,7 +31,7 @@ async function processar() {
 
   const { data: fila, error } = await db
     .from("sync_externo_fila")
-    .select("id, tabela, registro_id")
+    .select("id, tabela, registro_id, tentativas")
     .is("processado_em", null)
     .lt("tentativas", 10)
     .order("id")

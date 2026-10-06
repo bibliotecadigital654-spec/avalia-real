@@ -24,6 +24,7 @@ import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/a
 import { Route as ApiPublicBitlabsWebhookRouteImport } from './routes/api/public/bitlabs-webhook'
 import { Route as ApiPublicJotformPrecadastroRouteImport } from './routes/api/public/jotform-precadastro'
 import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
+import { Route as ApiPublicSyncExternoRouteImport } from './routes/api/public/sync-externo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -102,6 +103,11 @@ const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
   path: '/api/public/postback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSyncExternoRoute = ApiPublicSyncExternoRouteImport.update({
+  id: '/api/public/sync-externo',
+  path: '/api/public/sync-externo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/jotform-precadastro': typeof ApiPublicJotformPrecadastroRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
+  '/api/public/sync-externo': typeof ApiPublicSyncExternoRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/jotform-precadastro': typeof ApiPublicJotformPrecadastroRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
+  '/api/public/sync-externo': typeof ApiPublicSyncExternoRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/tarefas': typeof AuthenticatedTarefasIndexRoute
 }
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/jotform-precadastro': typeof ApiPublicJotformPrecadastroRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
+  '/api/public/sync-externo': typeof ApiPublicSyncExternoRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/api/public/bitlabs-webhook'
     | '/api/public/jotform-precadastro'
     | '/api/public/postback'
+    | '/api/public/sync-externo'
     | '/admin/'
     | '/tarefas/'
   fileRoutesByTo: FileRoutesByTo
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/api/public/bitlabs-webhook'
     | '/api/public/jotform-precadastro'
     | '/api/public/postback'
+    | '/api/public/sync-externo'
     | '/admin'
     | '/tarefas'
   id:
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/api/public/bitlabs-webhook'
     | '/api/public/jotform-precadastro'
     | '/api/public/postback'
+    | '/api/public/sync-externo'
     | '/_authenticated/admin/'
     | '/_authenticated/tarefas/'
   fileRoutesById: FileRoutesById
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   ApiPublicBitlabsWebhookRoute: typeof ApiPublicBitlabsWebhookRoute
   ApiPublicJotformPrecadastroRoute: typeof ApiPublicJotformPrecadastroRoute
   ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
+  ApiPublicSyncExternoRoute: typeof ApiPublicSyncExternoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -323,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPostbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/sync-externo': {
+      id: '/api/public/sync-externo'
+      path: '/api/public/sync-externo'
+      fullPath: '/api/public/sync-externo'
+      preLoaderRoute: typeof ApiPublicSyncExternoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -359,6 +379,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBitlabsWebhookRoute: ApiPublicBitlabsWebhookRoute,
   ApiPublicJotformPrecadastroRoute: ApiPublicJotformPrecadastroRoute,
   ApiPublicPostbackRoute: ApiPublicPostbackRoute,
+  ApiPublicSyncExternoRoute: ApiPublicSyncExternoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
