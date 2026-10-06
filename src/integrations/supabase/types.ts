@@ -287,6 +287,36 @@ export type Database = {
           },
         ]
       }
+      sync_externo_fila: {
+        Row: {
+          created_at: string
+          erro: string | null
+          id: number
+          processado_em: string | null
+          registro_id: string
+          tabela: string
+          tentativas: number
+        }
+        Insert: {
+          created_at?: string
+          erro?: string | null
+          id?: number
+          processado_em?: string | null
+          registro_id: string
+          tabela: string
+          tentativas?: number
+        }
+        Update: {
+          created_at?: string
+          erro?: string | null
+          id?: number
+          processado_em?: string | null
+          registro_id?: string
+          tabela?: string
+          tentativas?: number
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           ativa: boolean

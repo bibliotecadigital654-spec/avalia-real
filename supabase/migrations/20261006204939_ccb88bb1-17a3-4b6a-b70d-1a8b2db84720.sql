@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.enfileirar_sync_externo() FROM PUBLIC, anon, authenticated;
