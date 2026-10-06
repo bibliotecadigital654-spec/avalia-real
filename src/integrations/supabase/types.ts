@@ -127,6 +127,45 @@ export type Database = {
         }
         Relationships: []
       }
+      pre_cadastros: {
+        Row: {
+          concluido_em: string | null
+          cpf: string
+          created_at: string
+          data_nascimento: string
+          email: string
+          id: string
+          nome_completo: string
+          origem: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          concluido_em?: string | null
+          cpf: string
+          created_at?: string
+          data_nascimento: string
+          email: string
+          id?: string
+          nome_completo: string
+          origem?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          concluido_em?: string | null
+          cpf?: string
+          created_at?: string
+          data_nascimento?: string
+          email?: string
+          id?: string
+          nome_completo?: string
+          origem?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           cpf: string | null
