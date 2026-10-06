@@ -28,20 +28,30 @@ function normalizar(chave: string) {
   return chave.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/^q\d+_/, "").replace(/[^a-z]/g, "");
 }
 
+// Campos de perguntas do Jotform vêm como "q5_DatadeNascimento"; metadados (submitDate, username...)
+// não devem ser confundidos com respostas. Procura primeiro nas perguntas, na ordem de prioridade dos nomes.
 function campo(valores: Record<string, unknown>, nomes: string[]) {
-  for (const [k, v] of Object.entries(valores)) {
-    const n = normalizar(k);
-    if (nomes.some((p) => n.includes(p))) {
-      const t = texto(v);
-      if (t) return t;
+  const entradas = Object.entries(valores);
+  const perguntas = entradas.filter(([k]) => /^q\d+_/.test(k));
+  const outras = entradas.filter(([k]) => !/^q\d+_/.test(k));
+  for (const grupo of [perguntas, outras]) {
+    for (const p of nomes) {
+      for (const [k, v] of grupo) {
+        if (normalizar(k).includes(p)) {
+          const t = texto(v);
+          if (t) return t;
+        }
+      }
     }
   }
   return "";
 }
 
 function dataIso(v: string): string {
-  const br = v.match(/^(\d{2})[/-](\d{2})[/-](\d{4})$/);
-  if (br) return `${br[3]}-${br[2]}-${br[1]}`;
+  const br = v.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})/);
+  if (br) return `${br[3]}-${(br[2] ?? "").padStart(2, "0")}-${(br[1] ?? "").padStart(2, "0")}`;
+  const iso = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (iso) return `${iso[1]}-${(iso[2] ?? "").padStart(2, "0")}-${(iso[3] ?? "").padStart(2, "0")}`;
   return v.slice(0, 10);
 }
 
@@ -108,7 +118,10 @@ export const Route = createFileRoute("/api/public/jotform-precadastro")({
           data_nascimento: dataIso(campo(valores, ["datadenascimento", "nascimento", "birth", "datanasc", "data", "date"])),
         });
         if (!parsed.success) {
-          console.error("[jotform-precadastro] rejeitado:", parsed.error.issues[0]?.path, parsed.error.issues[0]?.message, "campos:", Object.keys(valores).join(","));
+          const chaveData = Object.keys(valores).find((k) => /^q\d+_/.test(k) && normalizar(k).includes("nasc"));
+          const v = chaveData ? valores[chaveData] : undefined;
+          const formato = v && typeof v === "object" ? `objeto{${Object.keys(v as object).join(",")}}` : typeof v === "string" ? v.replace(/\d/g, "9") : typeof v;
+          console.error("[jotform-precadastro] rejeitado:", parsed.error.issues[0]?.path, parsed.error.issues[0]?.message, "formato data:", formato, "campos:", Object.keys(valores).join(","));
           return Response.json({ ok: false, erro: parsed.error.issues[0]?.message ?? "dados invalidos" }, { status: 422 });
         }
 
