@@ -12,10 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedCarteiraRouteImport } from './routes/_authenticated/carteira'
 import { Route as AuthenticatedOfertasRouteImport } from './routes/_authenticated/ofertas'
 import { Route as AuthenticatedSuporteRouteImport } from './routes/_authenticated/suporte'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminGerenciarTarefasRouteImport } from './routes/_authenticated/admin/gerenciar-tarefas'
 import { Route as AuthenticatedTarefasIndexRouteImport } from './routes/_authenticated/tarefas/index'
 import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authenticated/tarefas/$id'
 import { Route as ApiPublicAdgemPostbackRouteImport } from './routes/api/public/adgem-postback'
@@ -37,11 +38,6 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedCarteiraRoute = AuthenticatedCarteiraRouteImport.update({
   id: '/carteira',
   path: '/carteira',
@@ -57,6 +53,17 @@ const AuthenticatedSuporteRoute = AuthenticatedSuporteRouteImport.update({
   path: '/suporte',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminGerenciarTarefasRoute =
+  AuthenticatedAdminGerenciarTarefasRouteImport.update({
+    id: '/admin/gerenciar-tarefas',
+    path: '/admin/gerenciar-tarefas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTarefasIndexRoute =
   AuthenticatedTarefasIndexRouteImport.update({
     id: '/tarefas/',
@@ -92,29 +99,31 @@ const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/suporte': typeof AuthenticatedSuporteRoute
+  '/admin/gerenciar-tarefas': typeof AuthenticatedAdminGerenciarTarefasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/admin': typeof AuthenticatedAdminRoute
   '/carteira': typeof AuthenticatedCarteiraRoute
   '/ofertas': typeof AuthenticatedOfertasRoute
   '/suporte': typeof AuthenticatedSuporteRoute
+  '/admin/gerenciar-tarefas': typeof AuthenticatedAdminGerenciarTarefasRoute
   '/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/tarefas': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRoutesById {
@@ -122,15 +131,16 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/carteira': typeof AuthenticatedCarteiraRoute
   '/_authenticated/ofertas': typeof AuthenticatedOfertasRoute
   '/_authenticated/suporte': typeof AuthenticatedSuporteRoute
+  '/_authenticated/admin/gerenciar-tarefas': typeof AuthenticatedAdminGerenciarTarefasRoute
   '/_authenticated/tarefas/$id': typeof AuthenticatedTarefasIdRoute
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
 }
 export interface FileRouteTypes {
@@ -138,44 +148,47 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/admin'
     | '/carteira'
     | '/ofertas'
     | '/suporte'
+    | '/admin/gerenciar-tarefas'
     | '/tarefas/$id'
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
+    | '/admin/'
     | '/tarefas/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/admin'
     | '/carteira'
     | '/ofertas'
     | '/suporte'
+    | '/admin/gerenciar-tarefas'
     | '/tarefas/$id'
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
+    | '/admin'
     | '/tarefas'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/admin'
     | '/_authenticated/carteira'
     | '/_authenticated/ofertas'
     | '/_authenticated/suporte'
+    | '/_authenticated/admin/gerenciar-tarefas'
     | '/_authenticated/tarefas/$id'
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
     | '/api/public/postback'
+    | '/_authenticated/admin/'
     | '/_authenticated/tarefas/'
   fileRoutesById: FileRoutesById
 }
@@ -212,13 +225,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/carteira': {
       id: '/_authenticated/carteira'
       path: '/carteira'
@@ -238,6 +244,20 @@ declare module '@tanstack/react-router' {
       path: '/suporte'
       fullPath: '/suporte'
       preLoaderRoute: typeof AuthenticatedSuporteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/gerenciar-tarefas': {
+      id: '/_authenticated/admin/gerenciar-tarefas'
+      path: '/admin/gerenciar-tarefas'
+      fullPath: '/admin/gerenciar-tarefas'
+      preLoaderRoute: typeof AuthenticatedAdminGerenciarTarefasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tarefas/': {
@@ -286,20 +306,23 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedCarteiraRoute: typeof AuthenticatedCarteiraRoute
   AuthenticatedOfertasRoute: typeof AuthenticatedOfertasRoute
   AuthenticatedSuporteRoute: typeof AuthenticatedSuporteRoute
+  AuthenticatedAdminGerenciarTarefasRoute: typeof AuthenticatedAdminGerenciarTarefasRoute
   AuthenticatedTarefasIdRoute: typeof AuthenticatedTarefasIdRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedTarefasIndexRoute: typeof AuthenticatedTarefasIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedCarteiraRoute: AuthenticatedCarteiraRoute,
   AuthenticatedOfertasRoute: AuthenticatedOfertasRoute,
   AuthenticatedSuporteRoute: AuthenticatedSuporteRoute,
+  AuthenticatedAdminGerenciarTarefasRoute:
+    AuthenticatedAdminGerenciarTarefasRoute,
   AuthenticatedTarefasIdRoute: AuthenticatedTarefasIdRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedTarefasIndexRoute: AuthenticatedTarefasIndexRoute,
 }
 

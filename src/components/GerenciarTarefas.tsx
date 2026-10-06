@@ -92,7 +92,7 @@ export function GerenciarTarefas() {
               {t.ativa ? "Pausar" : "Ativar"}
             </button>
             <button onClick={() => excluir(t.id)} className="rounded-full px-3 py-1.5 text-xs font-semibold text-destructive ring-1 ring-destructive/30">
-              Excluir
+              🗑 Excluir
             </button>
           </div>
         ))}

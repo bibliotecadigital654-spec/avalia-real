@@ -7,7 +7,7 @@ import { AppShell } from "@/components/AppShell";
 import { CameraCapture } from "@/components/CameraCapture";
 import { useConta } from "@/hooks/useConta";
 import { useAuth } from "@/hooks/useAuth";
-import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
+import { isAdminMaster as ehAdminMaster } from "@/lib/licenca-vitalicia";
 import { brl, dataHora } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/carteira")({
@@ -48,7 +48,7 @@ function CarteiraPage() {
   const [enviando, setEnviando] = useState(false);
   const [modalFacial, setModalFacial] = useState(false);
   const [rostoCapturado, setRostoCapturado] = useState<string | null>(null);
-  const isento = temLicencaVitalicia(user?.email);
+  const isento = ehAdminMaster(user?.email);
 
   const { data: extrato } = useQuery({
     queryKey: ["extrato"],

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Conta = {
@@ -28,7 +29,7 @@ export function contaQueryOptions() {
         saldo: Number(perfil?.saldo ?? 0),
         isAdmin: (papeis ?? []).some((p) => p.role === "admin"),
         plano:
-          (user.email ?? "").toLowerCase() === "bibliotecadigital654@gmail.com"
+          temLicencaVitalicia(user.email)
             ? "ouro"
             : perfil?.plano ?? "nenhum",
       };

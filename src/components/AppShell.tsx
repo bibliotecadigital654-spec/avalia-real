@@ -1,10 +1,11 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
+import { isAdminMaster as ehAdminMaster } from "@/lib/licenca-vitalicia";
 import { PainelInstitucional } from "@/components/RodapeInstitucional";
+import { LicencaGate } from "@/components/LicencaGate";
 import { AvaliaRealLogo } from "@/components/AvaliaRealLogo";
 
 type NavItem = { to: string; label: string; glyph: string };
@@ -37,8 +38,9 @@ export function AppShell({
   const queryClient = useQueryClient();
   const [institucional, setInstitucional] = useState(false);
   const { user } = useAuth();
+  const location = useLocation();
   // O botão do painel de administração aparece somente para o e-mail do administrador master.
-  const isAdminMaster = temLicencaVitalicia(user?.email);
+  const isAdminMaster = ehAdminMaster(user?.email);
 
   async function sair() {
     await queryClient.cancelQueries();
@@ -63,10 +65,10 @@ export function AppShell({
             <div className="flex items-center gap-2">
               {isAdminMaster ? (
                 <Link
-                  to="/admin"
+                  to="/admin/gerenciar-tarefas"
                   className="rounded-lg bg-card px-3 py-1.5 text-[11px] font-semibold text-brand ring-1 ring-border"
                 >
-                  Painel de Administração
+                  Painel Admin
                 </Link>
               ) : null}
               <button
@@ -78,7 +80,7 @@ export function AppShell({
             </div>
           </div>
 
-          {children}
+          {location.pathname.startsWith("/suporte") ? children : <LicencaGate userId={user?.id}>{children}</LicencaGate>}
 
           <section className="mt-8 rounded-lg bg-card p-4 ring-1 ring-border">
             <p className="font-display text-sm font-semibold tracking-tight">Suporte e Ajuda</p>
