@@ -3,7 +3,6 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -78,18 +77,6 @@ function AuthPage() {
     }
   }
 
-  async function entrarComGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Não foi possível entrar com o Google");
-      return;
-    }
-    if (result.redirected) return;
-    navigate({ to: "/tarefas" });
-  }
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-10">
@@ -154,14 +141,6 @@ function AuthPage() {
             className="w-full rounded-full bg-gradient-brand py-3.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98] disabled:opacity-60"
           >
             {enviando ? "Aguarde…" : modo === "entrar" ? "Entrar" : "Criar conta"}
-          </button>
-
-          <button
-            type="button"
-            onClick={entrarComGoogle}
-            className="w-full rounded-full bg-background py-3 text-sm font-semibold text-foreground ring-1 ring-border transition-transform active:scale-[.98]"
-          >
-            Continuar com o Google
           </button>
         </form>
 

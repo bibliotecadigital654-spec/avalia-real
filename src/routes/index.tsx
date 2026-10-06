@@ -447,14 +447,6 @@ function Index() {
               >
                 {enviando ? "Aguarde…" : modo === "criar" ? "Criar conta" : "Entrar"}
               </button>
-
-              <button
-                type="button"
-                onClick={() => navigate({ to: "/auth" })}
-                className="w-full text-center text-xs font-semibold text-brand"
-              >
-                Prefiro entrar com o Google
-              </button>
             </form>
           </div>
         </div>
