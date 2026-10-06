@@ -22,6 +22,7 @@ import { Route as AuthenticatedTarefasIdRouteImport } from './routes/_authentica
 import { Route as ApiPublicAdgemPostbackRouteImport } from './routes/api/public/adgem-postback'
 import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
 import { Route as ApiPublicBitlabsWebhookRouteImport } from './routes/api/public/bitlabs-webhook'
+import { Route as ApiPublicJotformPrecadastroRouteImport } from './routes/api/public/jotform-precadastro'
 import { Route as ApiPublicPostbackRouteImport } from './routes/api/public/postback'
 
 const IndexRoute = IndexRouteImport.update({
@@ -90,6 +91,12 @@ const ApiPublicBitlabsWebhookRoute = ApiPublicBitlabsWebhookRouteImport.update({
   path: '/api/public/bitlabs-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJotformPrecadastroRoute =
+  ApiPublicJotformPrecadastroRouteImport.update({
+    id: '/api/public/jotform-precadastro',
+    path: '/api/public/jotform-precadastro',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPostbackRoute = ApiPublicPostbackRouteImport.update({
   id: '/api/public/postback',
   path: '/api/public/postback',
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
+  '/api/public/jotform-precadastro': typeof ApiPublicJotformPrecadastroRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/tarefas/': typeof AuthenticatedTarefasIndexRoute
@@ -122,6 +130,7 @@ export interface FileRoutesByTo {
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
+  '/api/public/jotform-precadastro': typeof ApiPublicJotformPrecadastroRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/tarefas': typeof AuthenticatedTarefasIndexRoute
@@ -139,6 +148,7 @@ export interface FileRoutesById {
   '/api/public/adgem-postback': typeof ApiPublicAdgemPostbackRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bitlabs-webhook': typeof ApiPublicBitlabsWebhookRoute
+  '/api/public/jotform-precadastro': typeof ApiPublicJotformPrecadastroRoute
   '/api/public/postback': typeof ApiPublicPostbackRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/tarefas/': typeof AuthenticatedTarefasIndexRoute
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
+    | '/api/public/jotform-precadastro'
     | '/api/public/postback'
     | '/admin/'
     | '/tarefas/'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
+    | '/api/public/jotform-precadastro'
     | '/api/public/postback'
     | '/admin'
     | '/tarefas'
@@ -187,6 +199,7 @@ export interface FileRouteTypes {
     | '/api/public/adgem-postback'
     | '/api/public/asaas-webhook'
     | '/api/public/bitlabs-webhook'
+    | '/api/public/jotform-precadastro'
     | '/api/public/postback'
     | '/_authenticated/admin/'
     | '/_authenticated/tarefas/'
@@ -199,6 +212,7 @@ export interface RootRouteChildren {
   ApiPublicAdgemPostbackRoute: typeof ApiPublicAdgemPostbackRoute
   ApiPublicAsaasWebhookRoute: typeof ApiPublicAsaasWebhookRoute
   ApiPublicBitlabsWebhookRoute: typeof ApiPublicBitlabsWebhookRoute
+  ApiPublicJotformPrecadastroRoute: typeof ApiPublicJotformPrecadastroRoute
   ApiPublicPostbackRoute: typeof ApiPublicPostbackRoute
 }
 
@@ -295,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBitlabsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jotform-precadastro': {
+      id: '/api/public/jotform-precadastro'
+      path: '/api/public/jotform-precadastro'
+      fullPath: '/api/public/jotform-precadastro'
+      preLoaderRoute: typeof ApiPublicJotformPrecadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/postback': {
       id: '/api/public/postback'
       path: '/api/public/postback'
@@ -336,6 +357,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicAdgemPostbackRoute: ApiPublicAdgemPostbackRoute,
   ApiPublicAsaasWebhookRoute: ApiPublicAsaasWebhookRoute,
   ApiPublicBitlabsWebhookRoute: ApiPublicBitlabsWebhookRoute,
+  ApiPublicJotformPrecadastroRoute: ApiPublicJotformPrecadastroRoute,
   ApiPublicPostbackRoute: ApiPublicPostbackRoute,
 }
 export const routeTree = rootRouteImport
