@@ -49,9 +49,9 @@ function campo(valores: Record<string, unknown>, nomes: string[]) {
 
 function dataIso(v: string): string {
   const br = v.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})/);
-  if (br) return `${br[3]}-${br[2].padStart(2, "0")}-${br[1].padStart(2, "0")}`;
+  if (br) return `${br[3]}-${(br[2] ?? "").padStart(2, "0")}-${(br[1] ?? "").padStart(2, "0")}`;
   const iso = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if (iso) return `${iso[1]}-${iso[2].padStart(2, "0")}-${iso[3].padStart(2, "0")}`;
+  if (iso) return `${iso[1]}-${(iso[2] ?? "").padStart(2, "0")}-${(iso[3] ?? "").padStart(2, "0")}`;
   return v.slice(0, 10);
 }
 
