@@ -10,7 +10,7 @@ import { isAdminMaster as ehAdminMaster } from "@/lib/licenca-vitalicia";
 import { brl, dataHora } from "@/lib/format";
 import { GerenciarTarefas } from "@/components/GerenciarTarefas";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({
     meta: [
       { title: "Painel Master | AvaliaReal" },
