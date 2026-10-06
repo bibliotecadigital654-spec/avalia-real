@@ -35,23 +35,15 @@ export function licencaQueryOptions(userId: string | null | undefined) {
   };
 }
 
-// LIBERAÇÃO TEMPORÁRIA DO PAYWALL: enquanto vigente, qualquer usuário
-// autenticado é tratado como licença ativa, sem consultar o banco.
-// Para reativar a cobrança, restaure a versão que usa licencaQueryOptions.
-const LICENCA_TEMPORARIAMENTE_ATIVA: Licenca = {
-  status: "ativo",
-  validade: null,
-  plano: "ouro",
-  ativa: true,
-};
-
-export function useLicenca(_userId: string | null | undefined) {
+export function useLicenca(userId: string | null | undefined) {
+  const q = useQuery(licencaQueryOptions(userId));
+  const licenca = q.data ?? null;
   return {
-    licenca: LICENCA_TEMPORARIAMENTE_ATIVA,
-    carregando: false,
-    recarregar: async () => {},
-    isAtivo: true,
-    statusLicenca: "ativo",
-    plano: "ouro",
+    licenca,
+    carregando: q.isLoading,
+    recarregar: async () => { await q.refetch(); },
+    isAtivo: Boolean(licenca?.ativa),
+    statusLicenca: licenca?.status ?? "inativo",
+    plano: licenca?.plano ?? "nenhum",
   };
 }

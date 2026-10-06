@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { useConta } from "@/hooks/useConta";
 import { useAuth } from "@/hooks/useAuth";
-import { temLicencaVitalicia } from "@/lib/licenca-vitalicia";
+import { isAdminMaster as ehAdminMaster } from "@/lib/licenca-vitalicia";
 import { brl, dataHora } from "@/lib/format";
 import { GerenciarTarefas } from "@/components/GerenciarTarefas";
 
@@ -46,7 +46,7 @@ function AdminPage() {
   const queryClient = useQueryClient();
   const [processando, setProcessando] = useState<string | null>(null);
 
-  const autorizado = temLicencaVitalicia(user?.email);
+  const autorizado = ehAdminMaster(user?.email);
 
   useEffect(() => {
     if (!carregandoAuth && user && !autorizado) {
