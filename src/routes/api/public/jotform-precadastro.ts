@@ -96,7 +96,8 @@ export const Route = createFileRoute("/api/public/jotform-precadastro")({
             const raw = valores["rawRequest"];
             if (typeof raw === "string") Object.assign(valores, JSON.parse(raw));
           }
-        } catch {
+        } catch (e) {
+          console.error("[jotform-precadastro] corpo invalido", String(e));
           return Response.json({ ok: false, erro: "corpo invalido" }, { status: 400 });
         }
 
@@ -104,9 +105,10 @@ export const Route = createFileRoute("/api/public/jotform-precadastro")({
           nome_completo: campo(valores, ["nomecompleto", "nome", "name"]),
           email: campo(valores, ["email"]),
           cpf: campo(valores, ["cpf"]).replace(/\D/g, ""),
-          data_nascimento: dataIso(campo(valores, ["datadenascimento", "nascimento", "birth"])),
+          data_nascimento: dataIso(campo(valores, ["datadenascimento", "nascimento", "birth", "datanasc", "data", "date"])),
         });
         if (!parsed.success) {
+          console.error("[jotform-precadastro] rejeitado:", parsed.error.issues[0]?.path, parsed.error.issues[0]?.message, "campos:", Object.keys(valores).join(","));
           return Response.json({ ok: false, erro: parsed.error.issues[0]?.message ?? "dados invalidos" }, { status: 422 });
         }
 
