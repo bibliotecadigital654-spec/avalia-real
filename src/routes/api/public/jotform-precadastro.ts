@@ -61,6 +61,20 @@ const schema = z.object({
 export const Route = createFileRoute("/api/public/jotform-precadastro")({
   server: {
     handlers: {
+      GET: async ({ request }) => {
+        const segredo = (process.env["JOTFORM_WEBHOOK_SECRET"] ?? "").trim();
+        const enviado = (new URL(request.url).searchParams.get("secret") ?? "").trim();
+        const ok = !!segredo && !!enviado && iguais(enviado, segredo);
+        const msg = !segredo
+          ? "Integração ainda não configurada no servidor."
+          : ok
+            ? "Chave correta! Este endereço está pronto. Cole-o no Jotform em Configurações > Integrações > Webhooks. Ele só recebe envios do formulário, não é uma página para abrir."
+            : "Chave incorreta. Confira se a chave no link é exatamente a que você salvou.";
+        return new Response(
+          `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Webhook AvaliaReal</title></head><body style="font-family:system-ui;background:#000;color:#fff;display:grid;place-items:center;min-height:100vh;margin:0;padding:24px"><div style="max-width:480px;text-align:center"><h1 style="color:${ok ? "#34d399" : "#f87171"}">${ok ? "✔ Webhook ativo" : "✖ Não autorizado"}</h1><p>${msg}</p></div></body></html>`,
+          { status: ok ? 200 : 401, headers: { "content-type": "text/html; charset=utf-8" } },
+        );
+      },
       POST: async ({ request }) => {
         const segredo = (process.env["JOTFORM_WEBHOOK_SECRET"] ?? "").trim();
         if (!segredo) return Response.json({ ok: false, erro: "integracao nao configurada" }, { status: 503 });
