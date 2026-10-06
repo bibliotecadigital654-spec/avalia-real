@@ -17,9 +17,9 @@ function texto(v: unknown): string {
   if (typeof v === "string" || typeof v === "number") return String(v).trim();
   if (typeof v === "object") {
     const o = v as Record<string, unknown>;
-    if ("first" in o || "last" in o) return `${texto(o.first)} ${texto(o.last)}`.trim();
+    if ("first" in o || "last" in o) return `${texto(o["first"])} ${texto(o["last"])}`.trim();
     if ("day" in o && "month" in o && "year" in o)
-      return `${texto(o.year)}-${texto(o.month).padStart(2, "0")}-${texto(o.day).padStart(2, "0")}`;
+      return `${texto(o["year"])}-${texto(o["month"]).padStart(2, "0")}-${texto(o["day"]).padStart(2, "0")}`;
   }
   return "";
 }
