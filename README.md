@@ -1,14 +1,18 @@
-# Welcome to your Lovable project
+# Avalia Real Rewards
+
+"Crie uma plataforma de microtarefas e avaliações de empresas chamada 'AvaliaReal'. O app deve ter um sistema de autenticação via Supabase onde o usuário pode se cadastrar. Na tela principal do usuário, mostre um feed de tarefas disponíveis (ex: 'Avaliar Atendimento Loja X', pagando R$ 3.50). Ao clicar na tarefa, deve abrir um formulário para o usuário responder perguntas, anexar uma foto e enviar. Crie também uma tela de 'Carteira' que mostra o saldo acumulado do usuário e um botão para solicitar resgate."
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://avalia-real.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ac915793-7a74-4d6d-a616-612b55eecc07).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +24,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
