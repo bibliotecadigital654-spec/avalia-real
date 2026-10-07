@@ -26,6 +26,11 @@ export const Route = createFileRoute("/_authenticated/tarefas/$id")({
 });
 
 const OPCOES = ["Ruim", "Regular", "Ótimo"] as const;
+const ETAPAS = [
+  "Sincronizando com o servidor...",
+  "Auditando interface da empresa...",
+  "Consolidando comissões...",
+];
 
 const schema = z.object({
   experiencia: z.enum(OPCOES),
@@ -45,6 +50,7 @@ function TarefaDetalhe() {
   const [experiencia, setExperiencia] = useState<(typeof OPCOES)[number]>("Ótimo");
   const [comentario, setComentario] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [progresso, setProgresso] = useState<number | null>(null);
 
   const { data: tarefa, isLoading } = useQuery({
     queryKey: ["tarefa", id],
@@ -55,7 +61,7 @@ function TarefaDetalhe() {
     },
   });
 
-  async function enviar() {
+  async function enviar(viaRobo = false) {
     if (!tarefa || !conta) return;
     const parsed = schema.safeParse({ experiencia, comentario });
     if (!parsed.success) {
@@ -70,19 +76,45 @@ function TarefaDetalhe() {
         user_id: conta.userId,
         experiencia: parsed.data.experiencia,
         comentario: parsed.data.comentario,
-        
         valor: tarefa.valor,
       });
       if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: ["meus-envios"] });
-      toast.success("Tarefa enviada! Assim que for aprovada o valor entra no seu saldo.");
+      toast.success(
+        viaRobo
+          ? "Sucesso: Auditoria enviada para aprovação!"
+          : "Tarefa enviada! Assim que for aprovada o valor entra no seu saldo.",
+      );
       navigate({ to: "/tarefas" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível enviar");
     } finally {
       setEnviando(false);
     }
+  }
+
+  async function ligarRobo() {
+    if (!tarefa || !conta || progresso !== null) return;
+    const parsed = schema.safeParse({ experiencia, comentario });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? "Responda a tarefa antes de ligar o robô");
+      return;
+    }
+    const inicio = Date.now();
+    setProgresso(0);
+    await new Promise<void>((resolve) => {
+      const t = setInterval(() => {
+        const pct = Math.min(100, ((Date.now() - inicio) / 15000) * 100);
+        setProgresso(pct);
+        if (pct >= 100) {
+          clearInterval(t);
+          resolve();
+        }
+      }, 100);
+    });
+    setProgresso(null);
+    await enviar(true);
   }
 
   return (
@@ -150,19 +182,38 @@ function TarefaDetalhe() {
                 </div>
 
                 <button
-                  onClick={enviar}
-                  disabled={enviando}
+                  onClick={ligarRobo}
+                  disabled={enviando || progresso !== null}
                   className="w-full rounded-full bg-gradient-brand py-3.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform active:scale-[.98] disabled:opacity-60"
                 >
-                  {enviando
-                    ? "Enviando…"
-                    : `Enviar tarefa e receber ${brl(Number(tarefa.valor))}`}
+                  {enviando ? "Enviando…" : "Ligar Robô IA e enviar para aprovação"}
                 </button>
+                <p className="text-center text-[11px] text-muted-foreground">
+                  O valor de {brl(Number(tarefa.valor))} entra no saldo após aprovação do administrador.
+                </p>
               </div>
             </>
           )}
         </div>
       </section>
+
+      {progresso !== null ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-[22px] bg-card p-5 ring-1 ring-border">
+            <p className="font-display text-sm font-semibold">Robô IA em execução</p>
+            <div className="mt-4 h-3 w-full overflow-hidden rounded-full bg-background ring-1 ring-border">
+              <div
+                className="h-full rounded-full bg-safe shadow-safe transition-[width] duration-100"
+                style={{ width: `${progresso}%` }}
+              />
+            </div>
+            <p className="mt-3 text-xs font-medium text-coin">
+              {ETAPAS[Math.min(ETAPAS.length - 1, Math.floor(progresso / 34))]}
+            </p>
+            <p className="text-[11px] text-muted-foreground">{Math.round(progresso)}%</p>
+          </div>
+        </div>
+      ) : null}
     </AppShell>
   );
 }
