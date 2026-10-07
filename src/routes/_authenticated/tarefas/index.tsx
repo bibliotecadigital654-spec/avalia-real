@@ -251,6 +251,7 @@ function TarefasPage() {
   });
 
   const enviadas = new Set((meus ?? []).map((s) => s.task_id));
+  const abertas = (tarefas ?? []).filter((t) => !enviadas.has(t.id));
 
   return (
     <AppShell nome={conta?.nome}>
@@ -288,14 +289,14 @@ function TarefasPage() {
         <div className="flex items-center justify-between">
           <h1 className="font-display text-lg font-semibold tracking-tight">Tarefas disponíveis</h1>
           <span className="rounded-full bg-brand/10 px-2.5 py-1 text-[11px] font-semibold text-brand">
-            {tarefas?.length ?? 0} abertas
+            {abertas.length} abertas
           </span>
         </div>
 
         <div className="mt-3 space-y-3">
           {isLoading ? <p className="text-sm text-muted-foreground">Carregando tarefas…</p> : null}
 
-          {!isLoading && (tarefas ?? []).length === 0 ? (
+          {!isLoading && abertas.length === 0 ? (
             <div className="rounded-lg bg-card px-4 py-6 text-center ring-1 ring-border">
               <p className="text-sm font-medium">Aguardando novas tarefas</p>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -304,7 +305,7 @@ function TarefasPage() {
             </div>
           ) : null}
 
-          {(tarefas ?? []).map((t) => (
+          {abertas.map((t) => (
             <Link
               key={t.id}
               to="/tarefas/$id"
@@ -334,7 +335,7 @@ function TarefasPage() {
                   Prazo: {t.prazo}
                 </span>
                 <span className="ml-auto text-brand">
-                  {enviadas.has(t.id) ? "Enviada ✓" : "Abrir →"}
+                  Abrir →
                 </span>
               </div>
             </Link>
